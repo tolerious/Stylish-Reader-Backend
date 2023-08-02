@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    div(class='whole-container')
+        each val in articles 
+            div(class='block-item-container',data-id=val.chapterId) 
+                div(class='block-item-left-container')
+                    img(class='cover-img-container',src=val.backgroundImg,data-id=val.chapterId)
+                div(class='block-item-right-container') 
+                    div(class='block-item-right-top') 
+                        span= val.title
+                    div(class='block-item-right-bottom')         
+                        span= val.fromLocation + '; ' + val.level + '; '+val.teacherName
+
+    - var n = 1;
+    div(class='page-container')
+        while n < (totalPages+1)
+            button(class='page-item')
+                span(class='page-item-span')= n++
+

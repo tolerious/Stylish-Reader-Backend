@@ -1,0 +1,92 @@
+body {
+  padding: 15px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00b7ff;
+}
+
+.label {
+  font-style: italic;
+}
+
+.audio-container,
+.whole-audio-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+.audio-container {
+  margin-right: 20px;
+  font-weight: bold;
+}
+/* ------------------------------------------------------------------------------ */
+.whole-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.block-item-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 500px;
+  border: 1px solid #eeeeee;
+  box-shadow: 1px 1px 2px #eeeeee;
+}
+
+.block-item-left-container {
+  width: 40%;
+}
+
+.cover-img-container {
+  width: 100%;
+  cursor: pointer;
+}
+
+.block-item-right-container {
+  height: 100%;
+  width: 60%;
+}
+
+.block-item-right-top,
+.block-item-right-bottom {
+  height: 50%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 30px;
+}
+
+.page-item {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  border: 1px solid #eeeeee;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.page-item-span {
+  height: 100%;
+  width: 100%;
+  display: block;
+}

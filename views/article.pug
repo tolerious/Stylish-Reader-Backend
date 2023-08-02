@@ -1,0 +1,83 @@
+extends layout
+
+block content
+    h3= enTitle
+    h3= chTitle
+    div(class='label')
+        span= "标签:" +  label + "; 作者:" +author + "; 日期:" + date + "; Level:" + level
+    div 
+        img(src=articleImg)
+    //- div 
+    //- audio(class='real-audio',src= firstMinuteUrl,controls)
+    div 
+        p= introduction
+    div(class='whole-audio-container')
+        div(class='audio-container') 
+            span="整篇文章音频:"
+            audio(class='real-audio',src=voiceUrl,controls)
+            a(href=voiceUrl,download)= '下载'
+        div(class='audio-container')
+            span= "全部讲解音频:"
+            audio(class='real-audio',src=explainVoiceUrl,controls)
+            a(href=explainVoiceUrl,download)= '下载'
+
+    div 
+        h3= "Pre Read Questions:"
+        ul
+            each val in preReadQuestion
+                li= val.content
+    div 
+        each val,index in article 
+            if index == 0
+                h3= val.enArticle
+            else 
+                p= val.enArticle 
+            div(class='audio-container')
+                span= "讲解音频:"
+                audio(class='real-audio',src=val.explainPieceUrl,controls) 
+                a(href=val.explainPieceUrl,download)= '下载'
+            if index == 0
+                h3= val.chArticle 
+            else 
+                p= val.chArticle
+
+    div 
+        each val,index in knowledgeList
+            each vv in val.explainDetailsList 
+                span= (index+1) +": " + vv.title
+                | !{vv.content}
+    h3= "Exercise"
+    div 
+        each val,index in examList 
+            if val.stem
+                div
+                    span= (index+1) + ". " + val.stem
+                div 
+                    span= val.stemTip
+                div 
+                    each val1,index1 in val.optionList
+                        div 
+                            span= val1.plan + ". " +   val1.word + " "
+            else 
+                p= (index+1) + ". " + val.examEn
+                p= val.examCh
+                div 
+                    each t in val.blankWord 
+                        span= "·" +  t.word + " ; "
+    h3= "Answer Key"
+    div 
+        each val,index in examList 
+            if val.stem 
+                div 
+                    span= " - " + val.correctAnswer + ' ; ' +  val.analysis
+    div 
+        each val,index in answerList 
+            div 
+                span= " - "
+                    each va in val 
+                        span= va.word + ", "
+    div 
+        button(class='handle-hide')
+            span= "Hide Audio"
+        button(class='handle-show')
+            span= "Show Audio"

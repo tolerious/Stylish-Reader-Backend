@@ -1,0 +1,35 @@
+module.exports = {
+  apps: [
+    {
+      name: "english-burning",
+      script: "bin/www",
+      watch: ".",
+      ignore_watch: ["node_modules", "log.txt"],
+      log_date_format: "YYYY-MM-DD HH:mm Z",
+      log_file: "/tmp/burning-english-log.txt",
+      env_production: {
+        NODE_ENV: "production",
+        DB_URL:
+          "xxx",
+      },
+      env: {
+        NODE_ENV: "development",
+        DB_URL: "mongodb://127.0.0.1:27017/test",
+      },
+    },
+  ],
+
+  deploy: {
+    production: {
+      user: "SSH_USERNAME",
+      host: "SSH_HOSTMACHINE",
+      ref: "origin/master",
+      repo: "GIT_REPOSITORY",
+      path: "DESTINATION_PATH",
+      "pre-deploy-local": "",
+      "post-deploy":
+        "npm install && pm2 reload ecosystem.config.js --env production",
+      "pre-setup": "",
+    },
+  },
+};
