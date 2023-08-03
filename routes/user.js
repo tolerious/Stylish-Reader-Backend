@@ -7,7 +7,7 @@ const ut = require("../utils/utils");
 const { generateResponse } = ut;
 
 var jwt = require("jsonwebtoken");
-router.post("/", async function (req, res, next) {
+router.post("/create", async function (req, res, next) {
   let body = req.body;
   let username = body.username;
   let password = md5(body.password);
