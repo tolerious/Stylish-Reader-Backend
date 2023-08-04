@@ -36,7 +36,9 @@ router.post("/bygroup", async function (req, res, next) {
 // 新建单词
 router.post("/", async function (req, res, next) {
   const body = req.body;
-  let groupID = body.groupID;
+  const groupID = body.groupID;
+  const u = req.tUser;
+  Object.assign(body, { creator: u._id });
   let groupItem = await wordGroupModel.find({ _id: groupID });
   if (groupItem.length != 1)
     res.json(generateResponse("", 400, "Word group doesn't exist."));

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const wordSchema = new Schema(
   {
+    creator: ObjectId,
     wordDetail: [
       {
         name: String,
