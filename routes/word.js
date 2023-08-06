@@ -65,6 +65,7 @@ router.delete("/", async function (req, res, next) {
     if (group.length != 1)
       res.json(generateResponse("", 400, "Word group doesn't exist."));
     group[0].wordCount--;
+    if (group[0].wordCount < 0) group[0].wordCount = 0;
     group[0].save();
     let doc = await wordModel.findByIdAndDelete(id).exec();
     res.json(generateResponse(doc));
