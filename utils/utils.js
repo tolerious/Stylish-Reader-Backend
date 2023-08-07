@@ -28,7 +28,8 @@ async function grabWordFromCambridge(word) {
     let phonetic = $(".entry-body__el")
       .eq(i)
       .children(".pos-header")
-      .find(".dpron");
+      .find(".dpron")
+      .eq(0);
     entryBodyElListObj.name = word.text();
     entryBodyElListObj.property = property.text();
     entryBodyElListObj.phonetic = phonetic.text();
