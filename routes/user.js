@@ -7,10 +7,16 @@ const ut = require("../utils/utils");
 const { generateResponse } = ut;
 
 var jwt = require("jsonwebtoken");
+const { smsCodeModel } = require("../schemas/smsCodeSchema");
 router.post("/create", async function (req, res, next) {
   let body = req.body;
   let username = body.username;
   let password = md5(body.password);
+  let code = body.code;
+  // verify code
+  let sms = await smsCodeModel.findOne({ username });
+  if (!sms) res.json(generateResponse("", 400, "send code first"));
+  if (code != sms.code) res.json(generateResponse("", 400, "code not match"));
   // find user first
   const users = await userModel.getUserByUserName(username);
   if (users.length == 0) {

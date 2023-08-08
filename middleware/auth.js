@@ -4,14 +4,16 @@ const { userModel } = require("../schemas/userSchema");
 const auth = function (req, res, next) {
   let rule = /daily*/i;
   let userRegisterRule = /user\/create/i;
-  console.log(req.originalUrl)
-  
+  let smsRule = /sms/i;
+  console.log(req.originalUrl);
+
   if (
     // TODO: This array should be a global array or a array in a global file
     (["/logic/login", "/grab", "/user/"].indexOf(req.originalUrl) > -1 &&
       (req.method === "POST" || req.method === "GET")) ||
     rule.test(req.originalUrl) ||
-    userRegisterRule.test(req.originalUrl)
+    userRegisterRule.test(req.originalUrl) ||
+    smsRule.test(req.originalUrl)
   ) {
     next();
     return;

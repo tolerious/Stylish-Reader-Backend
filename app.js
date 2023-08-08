@@ -12,6 +12,7 @@ var logicRouter = require("./routes/logic");
 const loggerMiddleware = require("./middleware/logger");
 const userSettingRouter = require("./routes/userSetting");
 const wordGroupRouter = require("./routes/wordGroup");
+const smsCodeRouter = require("./routes/smsCode");
 const auth = require("./middleware/auth");
 var app = express();
 
@@ -31,6 +32,7 @@ app.use("/", indexRouter);
 app.use("/user", usersRouter);
 app.use("/article", articleRouter);
 app.use("/word", wordRouter);
+app.use("/sms", smsCodeRouter);
 app.use("/logic", logicRouter);
 app.use("/wordgroup", wordGroupRouter);
 app.use("/usersetting", userSettingRouter);
