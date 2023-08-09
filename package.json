@@ -6,6 +6,9 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@alicloud/credentials": "^2.2.6",
+    "@alicloud/dysmsapi20170525": "2.0.23",
+    "@alicloud/openapi-client": "^0.4.6",
     "axios": "^1.4.0",
     "cheerio": "1.0.0-rc.12",
     "cookie-parser": "~1.4.4",

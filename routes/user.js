@@ -8,6 +8,21 @@ const { generateResponse } = ut;
 
 var jwt = require("jsonwebtoken");
 const { smsCodeModel } = require("../schemas/smsCodeSchema");
+router.post("/exist", async function (req, res, next) {
+  let b = req.body;
+  let username = b.username;
+  if (username) {
+    let t = await userModel.findOne({ username });
+    console.log(t);
+    if (t) {
+      res.json(generateResponse("", 200, "User exist"));
+    } else {
+      res.json(generateResponse("can", 200, ""));
+    }
+  } else {
+    res.json(generateResponse("", 200, "User exist"));
+  }
+});
 router.post("/create", async function (req, res, next) {
   let body = req.body;
   let username = body.username;
@@ -15,8 +30,15 @@ router.post("/create", async function (req, res, next) {
   let code = body.code;
   // verify code
   let sms = await smsCodeModel.findOne({ username });
-  if (!sms) res.json(generateResponse("", 400, "send code first"));
-  if (code != sms.code) res.json(generateResponse("", 400, "code not match"));
+  if (!sms) {
+    res.json(generateResponse("", 400, "send code first"));
+    return;
+  }
+  if (code != sms.code) {
+    res.json(generateResponse("", 400, "code not match"));
+    return 
+  }
+
   // find user first
   const users = await userModel.getUserByUserName(username);
   if (users.length == 0) {

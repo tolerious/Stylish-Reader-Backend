@@ -17,7 +17,7 @@ const smsCodeSchema = new Schema(
         let s = await smsCodeModel.findOneAndUpdate(
           { username },
           { code: t },
-          { upsert: true }
+          { upsert: true, overwrite: true ,returnDocument:'after'}
         );
         return s;
       },

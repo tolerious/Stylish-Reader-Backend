@@ -5,6 +5,7 @@ const auth = function (req, res, next) {
   let rule = /daily*/i;
   let userRegisterRule = /user\/create/i;
   let smsRule = /sms/i;
+  let userExistRule = /user\/exist/i;
   console.log(req.originalUrl);
 
   if (
@@ -13,7 +14,8 @@ const auth = function (req, res, next) {
       (req.method === "POST" || req.method === "GET")) ||
     rule.test(req.originalUrl) ||
     userRegisterRule.test(req.originalUrl) ||
-    smsRule.test(req.originalUrl)
+    smsRule.test(req.originalUrl) ||
+    userExistRule.test(req.originalUrl)
   ) {
     next();
     return;
