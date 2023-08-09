@@ -11,10 +11,15 @@ module.exports = {
         NODE_ENV: "production",
         DB_URL:
           "xxx",
+        // aliyun key id and key secret
+        ACCESS_KEY_ID: "xx",
+        ACCESS_KEY_SECRET: "xx",
       },
       env: {
         NODE_ENV: "development",
         DB_URL: "mongodb://127.0.0.1:27017/test",
+        ACCESS_KEY_ID: "xx",
+        ACCESS_KEY_SECRET: "xx",
       },
     },
   ],
