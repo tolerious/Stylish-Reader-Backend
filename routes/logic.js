@@ -8,6 +8,10 @@ const jwt = require("jsonwebtoken");
 const { userModel } = require("../schemas/userSchema");
 const { generateResponse } = ut;
 
+router.get("/pingpong", function (req, res, next) {
+  res.json(generateResponse());
+});
+
 router.post("/login", async function (req, res, next) {
   let body = req.body;
   let payload = { username: body.username, password: body.password };
