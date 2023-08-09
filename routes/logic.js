@@ -37,7 +37,7 @@ router.post("/login", async function (req, res, next) {
     );
     users[0].token = r;
     users[0].save();
-    res.json(generateResponse({ token: r }));
+    res.json(generateResponse({ token: r,username:users[0].username }));
   }
 });
 
