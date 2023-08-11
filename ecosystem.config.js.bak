@@ -4,7 +4,7 @@ module.exports = {
       name: "english-burning",
       script: "bin/www",
       watch: ".",
-      ignore_watch: ["node_modules", "log.txt"],
+      ignore_watch: ["node_modules", "log.txt", ".git", ".pnpm-store"],
       log_date_format: "YYYY-MM-DD HH:mm Z",
       log_file: "/tmp/burning-english-log.txt",
       env_production: {
