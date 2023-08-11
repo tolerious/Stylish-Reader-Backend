@@ -9,6 +9,7 @@ const userSettingSchema = new Schema(
     defaultGroupID: ObjectId,
   },
   {
+    timestamps: true,
     statics: {
       async getUserByUserName(username) {
         return await mongoose.model("UserSetting", userSettingSchema).find({

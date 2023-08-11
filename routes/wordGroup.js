@@ -18,6 +18,12 @@ router.post("/", async function (req, res, next) {
   res.json(generateResponse(t));
 });
 
+router.post('/detail', async function (req, res, next) {
+  let body = req.body
+  if (!body.groupID) res.json(generateResponse('', 400))
+  let g = await wordGroupModel.findById({ _id: body.groupID })
+  res.json(generateResponse(g))
+})
 router.delete("/", async function (req, res, next) {
   let id = req.body.id;
   let group = await wordGroupModel.findById(id);
@@ -29,5 +35,11 @@ router.delete("/", async function (req, res, next) {
     res.json(generateResponse(doc));
   }
 });
+
+router.post('/update', async function (req, res, next) {
+  let d = req.body
+  let r = await wordGroupModel.findOneAndUpdate({ _id: d.groupID }, d, { returnDocument: 'after' })
+  res.json(generateResponse(r))
+})
 
 module.exports = router;

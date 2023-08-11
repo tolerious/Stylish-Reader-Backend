@@ -6,11 +6,10 @@ const smsCodeSchema = new Schema(
   {
     username: String,
     code: String,
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
   },
 
   {
+    timestamps: true,
     statics: {
       async generateCode(username) {
         let t = Math.random().toFixed(4).toString().split(".")[1];

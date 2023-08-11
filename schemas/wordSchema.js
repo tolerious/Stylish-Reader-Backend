@@ -22,10 +22,9 @@ const wordSchema = new Schema(
       },
     ],
     groupID: ObjectId,
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
   },
   {
+    timestamps: true,
     statics: {
       getWordListCount() {
         return mongoose.model("Word").find({}).count();

@@ -8,12 +8,11 @@ const articleSchema = new Schema(
     author: String,
     content: String,
     tags: [String],
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
     link: { type: String, default: "" },
   },
 
   {
+    timestamps: true,
     statics: {
       async searchArticleByContent(content, pageNo = 0, pageSize = 10) {
         let orList = content.map((item) => {

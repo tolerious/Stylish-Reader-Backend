@@ -6,12 +6,12 @@ const { Schema } = mongoose;
 const wordGroupSchema = new Schema(
   {
     userID: ObjectId,
+    groupMediaUrl: String,
     name: { type: String, default: "" },
     wordCount: { type: Number, default: 0 },
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
   },
   {
+    timestamps: true,
     statics: {
       getMyGroup(userID) {
         return mongoose.model("WordGroup").find({ userID });

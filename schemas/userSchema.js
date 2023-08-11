@@ -8,10 +8,9 @@ const userSchema = new Schema(
     password: String,
     source: { type: String, default: "web" },
     token: { type: String, default: "" },
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
   },
   {
+    timestamps: true,
     statics: {
       async getUserByUserName(username) {
         return await mongoose.model("User", userSchema).find({
