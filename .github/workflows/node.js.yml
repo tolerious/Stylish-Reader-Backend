@@ -30,8 +30,6 @@ jobs:
       # uses: victorargento/pm2-deployment@9f1857537a23be1e6eb173bc5394a49c6e3e3e1a
       uses: victorargento/pm2-deployment@0.1
       with:
-        # 
-        build: # optional, default is false
         # Remote host
         host: ${{ secrets.SERVER_IP_ADDRESS }}
         # Username to login
