@@ -21,20 +21,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: PM2 Deployment
+    - name: Server Shell
       # You may pin to the exact commit or the version.
-      # uses: victorargento/pm2-deployment@9f1857537a23be1e6eb173bc5394a49c6e3e3e1a
-      uses: victorargento/pm2-deployment@0.1
+      # uses: tzzs/server-shell@e6313d235c16b3b51c67277ba2ec70a55e43c0d6
+      uses: tzzs/server-shell@v3
       with:
-        # 
-        build: # optional, default is false
-        # Remote host
-        host: ${{ secrets.SERVER_IP_ADDRESS }}
-        # Username to login
-        username: ${{ secrets.SERVER_USER }}
-        # SSH password
-        password: ${{ secrets.SERVER_PASSWORD }}
-        # Remote path where the files are going to be copied
-        remote-path: "/var/www/html/English-Burning-Backend"
-        # PM2 ID or Name of the process
-        pm2-id: "english-burning"
+        # server private key
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        # server login username
+        USERNAME: ${{ secrets.SERVER_USER }}
+        # server ip
+        IP: ${{ secrets.SERVER_IP_ADDRESS }}
+        # The port to connect to the server ssh
+        # shell to execute on server
+        SHELL: ls
