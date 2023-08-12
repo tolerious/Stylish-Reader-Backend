@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "pm2 delete all && pm2 start --env=production"
   },
   "dependencies": {
     "@alicloud/credentials": "^2.2.6",
