@@ -25,7 +25,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'pnpm'
+    - uses: pnpm/action-setup@v2
+      with:
+          version: 8
     - name: PM2 Deployment
       # You may pin to the exact commit or the version.
       # uses: victorargento/pm2-deployment@9f1857537a23be1e6eb173bc5394a49c6e3e3e1a
