@@ -39,6 +39,6 @@ jobs:
         # SSH password
         password: ${{ secrets.SERVER_PASSWORD }}
         # Remote path where the files are going to be copied
-        remote-path: "/var/www/html"
+        remote-path: "/var/www/html/English-burning-backend"
         # PM2 ID or Name of the process
         pm2-id: "english-burning"
