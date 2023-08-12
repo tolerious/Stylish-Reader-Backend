@@ -3,6 +3,7 @@ module.exports = {
     {
       name: "english-burning",
       script: "bin/www",
+      interpreter: 'node@16.20.0',
       watch: ".",
       ignore_watch: ["node_modules", "log.txt", ".git", ".pnpm-store"],
       log_date_format: "YYYY-MM-DD HH:mm Z",
@@ -11,29 +12,28 @@ module.exports = {
         NODE_ENV: "production",
         DB_URL:
           "xxx",
-        // aliyun key id and key secret
-        ACCESS_KEY_ID: "xx",
-        ACCESS_KEY_SECRET: "xx",
+        ACCESS_KEY_ID: "xxx",
+        ACCESS_KEY_SECRET: "xxx",
       },
       env: {
         NODE_ENV: "development",
         DB_URL: "mongodb://127.0.0.1:27017/test",
-        ACCESS_KEY_ID: "xx",
-        ACCESS_KEY_SECRET: "xx",
+        ACCESS_KEY_ID: "xxx",
+        ACCESS_KEY_SECRET: "xxx",
       },
     },
   ],
 
   deploy: {
     production: {
-      user: "SSH_USERNAME",
-      host: "SSH_HOSTMACHINE",
+      user: "xxx",
+      host: "xxx",
       ref: "origin/master",
-      repo: "GIT_REPOSITORY",
-      path: "DESTINATION_PATH",
+      repo: "git@github.com:tolerious/English-Burning-Backend.git",
+      path: "/var/www/html",
       "pre-deploy-local": "",
       "post-deploy":
-        "npm install && pm2 reload ecosystem.config.js --env production",
+        "source /etc/profile && pm2 delete all",
       "pre-setup": "",
     },
   },
