@@ -1,2 +1,3 @@
- #!/bin/bash
- ls -alh
+#!/bin/bash
+ls -alh
+pnpm i
