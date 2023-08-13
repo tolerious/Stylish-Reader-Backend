@@ -9,6 +9,16 @@ function generateResponse(data = "", code = 200, msg = "success") {
   };
 }
 
+function deleteKey(obj) {
+  delete obj._id
+  delete obj.createAt
+  delete obj.createDate
+  delete obj.createDate
+  delete obj.updateDate
+  delete obj.__v
+
+}
+
 async function grabWordFromCambridge(word) {
   let url = `https://dictionary.cambridge.org/dictionary/english-chinese-simplified/${word}`;
   let r = await axios.get(url);

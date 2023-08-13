@@ -35,6 +35,25 @@ router.delete("/", async function (req, res, next) {
     res.json(generateResponse(doc));
   }
 });
+router.get('/public', async function (req, res, next) {
+  let groupList = await wordGroupModel.find({ isPublic: true })
+  res.json(generateResponse(groupList))
+})
+
+router.post('/copy', async function (req, res, next) {
+  let u = req.tUser
+  let b = req.body
+  if (!b.groupID) { res.json(generateResponse('', 400, 'error')); return }
+  let f = await wordGroupModel.findOne({ _id: b.groupID }).lean()
+  console.log(f);
+  let o = Object.assign({}, f)
+  delete o._id
+  // let n = await wordGroupModel.create(o)
+  // n.name = 'b'
+  // n.save()
+  console.log(o);
+  res.json(generateResponse())
+})
 
 router.post('/update', async function (req, res, next) {
   let d = req.body
