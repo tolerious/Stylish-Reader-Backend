@@ -17,12 +17,10 @@ const wordGroupSchema = new Schema(
   {
     timestamps: true,
     statics: {
-      async isParentGroup(id) {
-        let t = await mongoose.model('WordGroup').find({ parentGroupID: id })
-        if (t.length > 0) return true
-        return false
+      getOnlyChildGroup(userID) {
+        return mongoose.model("WordGroup").find({ userID: userID, parentGroupID: { $ne: '' } })
       },
-      getMyGroup(userID) {
+      getOnlyParentGroup(userID) {
         return mongoose.model("WordGroup").find({ userID })
           .where('parentGroupID').equals('');
       },

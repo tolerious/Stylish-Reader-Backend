@@ -6,9 +6,16 @@ var router = express.Router();
 /* GET users listing. */
 router.get("/", async function (req, res, next) {
   let user = req.tUser;
-  let t = await wordGroupModel.getMyGroup(user._id);
+  let t = await wordGroupModel.getOnlyParentGroup(user._id);
   res.json(generateResponse(t));
 });
+
+// 获取所有属于自己的子词组
+router.get('/child', async function (req, res, next) {
+  let user = req.tUser;
+  let t = await wordGroupModel.getOnlyChildGroup(user._id)
+  res.json(generateResponse(t))
+})
 
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
@@ -21,7 +28,12 @@ router.post("/", async function (req, res, next) {
 router.post('/detail', async function (req, res, next) {
   let body = req.body
   if (!body.groupID) res.json(generateResponse('', 400))
-  let g = await wordGroupModel.findById({ _id: body.groupID })
+  let g = await wordGroupModel.findById({ _id: body.groupID }).lean()
+  let t = await wordGroupModel.find({ parentGroupID: body.groupID }).lean()
+  console.log(t.length);
+  if (t.length > 0) g = Object.assign(g, { hasChild: true })
+  else g = Object.assign(g, { hasChild: false })
+  console.log(g);
   res.json(generateResponse(g))
 })
 router.delete("/", async function (req, res, next) {
