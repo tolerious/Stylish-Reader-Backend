@@ -4,6 +4,7 @@ const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
 var router = express.Router();
 /* GET users listing. */
+// 获取所有父亲词组
 router.get("/", async function (req, res, next) {
   let user = req.tUser;
   let t = await wordGroupModel.getOnlyParentGroup(user._id);
