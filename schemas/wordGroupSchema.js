@@ -7,6 +7,7 @@ const wordGroupSchema = new Schema(
   {
     userID: ObjectId,
     groupMediaUrl: String,
+    groupAudioUrl: String,
     groupArticleUrl: String,
     isPublic: { type: Boolean, default: false },
     name: { type: String, default: "" },
