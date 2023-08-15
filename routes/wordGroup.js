@@ -13,7 +13,7 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
   let body = req.body;
-  Object.assign(body, { userID: user._id });
+  Object.assign(body, { userID: user._id, parentGroupID: '' });
   let t = await wordGroupModel.create(body);
   res.json(generateResponse(t));
 });
@@ -59,6 +59,22 @@ router.post('/update', async function (req, res, next) {
   let d = req.body
   let r = await wordGroupModel.findOneAndUpdate({ _id: d.groupID }, d, { returnDocument: 'after' })
   res.json(generateResponse(r))
+})
+
+router.post('/children', async function (req, res, next) {
+  let d = req.body
+  let r = await wordGroupModel.find({ parentGroupID: d.parentGroupID })
+  res.json(generateResponse(r))
+})
+
+router.post('/setparent', async function (req, res, next) {
+  let d = req.body
+  let parentGroupID = d.parentGroupID
+  let childGroupID = d.childGroupID
+  let c = await wordGroupModel.findById(childGroupID)
+  c.parentGroupID = parentGroupID
+  c.save()
+  res.json(generateResponse(c))
 })
 
 module.exports = router;
