@@ -27,6 +27,13 @@ router.post('/detail', async function (req, res, next) {
 router.delete("/", async function (req, res, next) {
   let id = req.body.id;
   let group = await wordGroupModel.findById(id);
+  // 先判断是不是父亲词组，且其中没有孩子词组
+  let g = await wordGroupModel.find({ parentGroupID: id })
+  if (g.length > 0) {
+    res.json(generateResponse('', 400, 'Has children'))
+    return
+  }
+  // 否则是孩子词组，则继续判断该词组中是否有单词
   if (group.wordCount != 0) {
     res.json(generateResponse("", 400, "Contains words."));
   } else {
