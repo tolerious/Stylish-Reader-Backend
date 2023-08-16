@@ -51,12 +51,21 @@ router.post("/bygroup", async function (req, res, next) {
 // 新建单词
 router.post("/", async function (req, res, next) {
   const body = req.body;
+  console.log(body);
   const groupID = body.groupID;
   const u = req.tUser;
   Object.assign(body, { creator: u._id });
   let groupItem = await wordGroupModel.find({ _id: groupID });
   if (groupItem.length != 1)
     res.json(generateResponse("", 400, "Word group doesn't exist."));
+  // 先去查找下这个group下面有没有已经存在该单词了。
+  let w = await wordModel.find({ groupID: groupItem[0]._id }).lean()
+  w.forEach(item => {
+    if (item.wordDetail[0].name === body.wordDetail[0].name) {
+      res.json(generateResponse('', 400, 'Word already Exist'))
+      return;
+    }
+  })
   groupItem[0].wordCount++;
   groupItem[0].save();
   const t = await wordModel.create(body);
