@@ -7,8 +7,17 @@ var router = express.Router();
 // 获取所有父亲词组
 router.get("/", async function (req, res, next) {
   let user = req.tUser;
-  let t = await wordGroupModel.getOnlyParentGroup(user._id);
-  res.json(generateResponse(t));
+  let t = await wordGroupModel.getOnlyParentGroup(user._id).lean()
+  let c = await wordGroupModel.aggregate([{ $match: { parentGroupID: { $ne: '' } } }]).group({ _id: "$parentGroupID", total: { $sum: 1 } })
+  let r = c.reduce((acc, curr, index) => {
+    acc[curr['_id']] = curr['total']
+    return acc
+  }, {})
+  let d = {
+    aggregate: r,
+    list: t
+  }
+  res.json(generateResponse(d));
 });
 
 // 获取所有属于自己的子词组
@@ -17,7 +26,7 @@ router.get('/child', async function (req, res, next) {
   let t = await wordGroupModel.getOnlyChildGroup(user._id)
   res.json(generateResponse(t))
 })
-
+// 创建词组
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
   let body = req.body;
@@ -92,6 +101,10 @@ router.post('/setparent', async function (req, res, next) {
   let parentGroupID = d.parentGroupID
   let childGroupID = d.childGroupID
   let c = await wordGroupModel.findById(childGroupID)
+  if (c.wordCount > 0) {
+    res.json(generateResponse('', 400, 'Parent group can not contain words'))
+    return
+  }
   c.parentGroupID = parentGroupID
   c.save()
   res.json(generateResponse(c))
