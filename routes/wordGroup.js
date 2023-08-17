@@ -96,6 +96,25 @@ router.post('/children', async function (req, res, next) {
   res.json(generateResponse(r))
 })
 
+router.post('/sharing/count', async function (req, res, next) {
+  let d = req.body
+  let groupID = d.groupID
+  if (!groupID) { res.json(generateResponse('', 400, 'Json data invalid.')); return }
+  let g = await wordGroupModel.findById(groupID)
+  console.log(g.groupMediaUrl.split(',').filter(item => { !item }));
+  res.json(generateResponse({
+    wordCount: g.wordCount,
+    videoCount: g.groupMediaUrl.split(',').filter(item => { !item }).length,
+    audioCount: g.groupAudioUrl.split(',').filter(item => { !item }).length,
+    articleCount: g.groupArticleUrl.split(',').filter(item => { !item }).length,
+  }))
+})
+
+router.get('/count', async function (req, res, next) {
+  let c = await wordGroupModel.countDocuments()
+  res.json(generateResponse(c))
+})
+
 router.post('/setparent', async function (req, res, next) {
   let d = req.body
   let parentGroupID = d.parentGroupID

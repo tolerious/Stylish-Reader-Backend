@@ -6,9 +6,9 @@ const { Schema } = mongoose;
 const wordGroupSchema = new Schema(
   {
     userID: ObjectId,
-    groupMediaUrl: String,
-    groupAudioUrl: String,
-    groupArticleUrl: String,
+    groupMediaUrl: { type: String, default: '' },
+    groupAudioUrl: { type: String, default: '' },
+    groupArticleUrl: { type: String, default: '' },
     parentGroupID: { type: String, default: '' },
     isPublic: { type: Boolean, default: false },
     name: { type: String, default: "" },
