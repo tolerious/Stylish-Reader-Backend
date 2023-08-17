@@ -90,6 +90,7 @@ router.post('/update', async function (req, res, next) {
   res.json(generateResponse(r))
 })
 
+// 获取某个父亲词组的所有孩子词组
 router.post('/children', async function (req, res, next) {
   let d = req.body
   let r = await wordGroupModel.find({ parentGroupID: d.parentGroupID })
