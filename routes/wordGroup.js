@@ -40,10 +40,8 @@ router.post('/detail', async function (req, res, next) {
   if (!body.groupID) res.json(generateResponse('', 400))
   let g = await wordGroupModel.findById({ _id: body.groupID }).lean()
   let t = await wordGroupModel.find({ parentGroupID: body.groupID }).lean()
-  console.log(t.length);
   if (t.length > 0) g = Object.assign(g, { hasChild: true })
   else g = Object.assign(g, { hasChild: false })
-  console.log(g);
   res.json(generateResponse(g))
 })
 router.delete("/", async function (req, res, next) {
