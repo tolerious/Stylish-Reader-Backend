@@ -20,6 +20,9 @@ const wordGroupSchema = new Schema(
       getOnlyChildGroup(userID) {
         return mongoose.model("WordGroup").find({ userID: userID, parentGroupID: { $ne: '' } })
       },
+      getPublicGroup() {
+        return mongoose.model("WordGroup").find({ isPublic: true, parentGroupID: { $ne: '' } })
+      },
       getOnlyParentGroup(userID) {
         return mongoose.model("WordGroup").find({ userID })
           .where('parentGroupID').equals('');

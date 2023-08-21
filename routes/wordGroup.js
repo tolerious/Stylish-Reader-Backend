@@ -63,7 +63,7 @@ router.delete("/", async function (req, res, next) {
   }
 });
 router.get('/public', async function (req, res, next) {
-  let groupList = await wordGroupModel.find({ isPublic: true })
+  let groupList = await wordGroupModel.getPublicGroup()
   res.json(generateResponse(groupList))
 })
 
