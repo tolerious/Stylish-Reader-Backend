@@ -8,7 +8,7 @@ const articleSchema = new Schema(
     author: String,
     content: String,
     tags: [String],
-    link: { type: String, default: "" },
+    link: { type: String, default: "" },//文章链接
   },
 
   {
