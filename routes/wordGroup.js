@@ -7,6 +7,7 @@ var router = express.Router();
 // 获取所有父亲词组
 router.get("/", async function (req, res, next) {
   let user = req.tUser;
+  console.log(user);
   let t = await wordGroupModel.getOnlyParentGroup(user._id).lean()
   let c = await wordGroupModel.aggregate([{ $match: { parentGroupID: { $ne: '' } } }]).group({ _id: "$parentGroupID", total: { $sum: 1 } })
   let r = c.reduce((acc, curr, index) => {
