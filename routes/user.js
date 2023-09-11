@@ -28,15 +28,19 @@ router.post("/create", async function (req, res, next) {
   let username = body.username;
   let password = md5(body.password);
   let code = body.code;
-  // verify code
-  let sms = await smsCodeModel.findOne({ username });
-  if (!sms) {
-    res.json(generateResponse("", 400, "send code first"));
-    return;
-  }
-  if (code != sms.code) {
-    res.json(generateResponse("", 400, "code not match"));
-    return 
+  if (body.ignore) {
+    console.log(`login without phone number.`);
+  } else {
+    // verify code
+    let sms = await smsCodeModel.findOne({ username });
+    if (!sms) {
+      res.json(generateResponse("", 400, "send code first"));
+      return;
+    }
+    if (code != sms.code) {
+      res.json(generateResponse("", 400, "code not match"));
+      return;
+    }
   }
 
   // find user first
