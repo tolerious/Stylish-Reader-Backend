@@ -23,12 +23,15 @@ router.post("/exist", async function (req, res, next) {
     res.json(generateResponse("", 200, "User exist"));
   }
 });
+
 router.post("/create", async function (req, res, next) {
   let body = req.body;
   let username = body.username;
   let password = md5(body.password);
   let code = body.code;
-  if (body.ignore) {
+  let source = "web";
+  if (body.ignore && body.source && body.source !== "web") {
+    source = body.source;
     console.log(`login without phone number.`);
   } else {
     // verify code
@@ -46,7 +49,9 @@ router.post("/create", async function (req, res, next) {
   // find user first
   const users = await userModel.getUserByUserName(username);
   if (users.length == 0) {
-    const t = await userModel.create(Object.assign(body, { password }));
+    const t = await userModel.create(
+      Object.assign(body, { password }, { source })
+    );
     res.json(generateResponse(t));
   } else {
     res.json(generateResponse("", 400, "user exist"));
