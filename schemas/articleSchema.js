@@ -1,14 +1,16 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
 const articleSchema = new Schema(
   {
+    creator: ObjectId,
     title: String,
     author: String,
     content: String,
     tags: [String],
-    link: { type: String, default: "" },//文章链接
+    link: { type: String, default: "" }, //文章链接
   },
 
   {

@@ -5,7 +5,7 @@ const { articleModel } = rt;
 const ut = require("../utils/utils");
 const { generateResponse } = ut;
 const axios = require("axios").default;
-/* GET users listing. */
+// Get article detail
 router.get("/:id", async function (req, res, next) {
   try {
     let t = await articleModel.findById(req.params.id).exec();
@@ -17,6 +17,9 @@ router.get("/:id", async function (req, res, next) {
 
 router.post("/", async function (req, res, next) {
   const body = req.body;
+  const u = req.tUser;
+  console.log(u);
+  Object.assign(body, { creator: u._id });
   const t = await articleModel.create(body);
   res.json(generateResponse(t));
 });
