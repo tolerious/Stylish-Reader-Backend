@@ -16,6 +16,10 @@ const articleSchema = new Schema(
   {
     timestamps: true,
     statics: {
+      async searchArticleByCreatorAndLink(creator, link) {
+        let r = await articleModel.find({ creator, link });
+        return r;
+      },
       async searchArticleByContent(content, pageNo = 0, pageSize = 10) {
         let orList = content.map((item) => {
           let reg = new RegExp(item, "i");
