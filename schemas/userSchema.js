@@ -6,7 +6,9 @@ const userSchema = new Schema(
   {
     username: String,
     password: String,
+    /** 注册来源，默认是web */
     source: { type: String, default: "web" },
+    /** 登陆后的token */
     token: { type: String, default: "" },
   },
   {

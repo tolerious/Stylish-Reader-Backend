@@ -31,7 +31,7 @@ router.get('/child', async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
   let body = req.body;
-  Object.assign(body, { userID: user._id, parentGroupID: '' });
+  Object.assign(body, { creator: user._id, parentGroupID: '' });
   let t = await wordGroupModel.create(body);
   res.json(generateResponse(t));
 });
@@ -104,7 +104,7 @@ router.post('/sharing/count', async function (req, res, next) {
   let c = await wordGroupModel.countDocuments()
   res.json(generateResponse({
     wordCount: g.wordCount,
-    videoCount: g.groupMediaUrl.split(',').filter(item => { !item }).length,
+    videoCount: g.groupVideoUrl.split(',').filter(item => { !item }).length,
     audioCount: g.groupAudioUrl.split(',').filter(item => { !item }).length,
     articleCount: g.groupArticleUrl.split(',').filter(item => { !item }).length,
     groupCount: c
