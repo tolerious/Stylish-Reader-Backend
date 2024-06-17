@@ -41,8 +41,8 @@ router.post("/list", async function (req, res, next) {
 router.post("/bygroup", async function (req, res, next) {
   let b = req.body;
   if (!b.groupID) {
-    res.json(generateResponse('', 400, 'Json format failed.'))
-    return
+    res.json(generateResponse("", 400, "Json format failed."));
+    return;
   }
   let n = await wordModel.find({ groupID: b.groupID });
   res.json(generateResponse(n));
@@ -52,24 +52,32 @@ router.post("/bygroup", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   const body = req.body;
   console.log(body);
-  const groupID = body.groupID;
+  const groupID = body.groupId;
   const u = req.tUser;
   Object.assign(body, { creator: u._id });
-  let groupItem = await wordGroupModel.find({ _id: groupID });
-  if (groupItem.length != 1)
-    res.json(generateResponse("", 400, "Word group doesn't exist."));
+  let groupItem;
+  // 如果不传groupID，就默认保存到default group中
+  console.log(groupID);
+  if (groupID === undefined) {
+    groupItem = await wordGroupModel.find({ isDefault: true });
+  } else {
+    groupItem = await wordGroupModel.find({ _id: groupID });
+  }
+  if (groupItem.length !== 1)
+    res.json(generateResponse("", 400, "Finding group failed."));
   // 先去查找下这个group下面有没有已经存在该单词了。
-  let w = await wordModel.find({ groupID: groupItem[0]._id }).lean()
-  w.forEach(item => {
-    if (item.wordDetail[0].name === body.wordDetail[0].name) {
-      res.json(generateResponse('', 400, 'Word already Exist'))
-      return;
-    }
-  })
-  groupItem[0].wordCount++;
-  groupItem[0].save();
-  const t = await wordModel.create(body);
-  res.json(generateResponse(t));
+  let w = await wordModel.find({ groupID: groupItem[0]._id }).lean();
+  let targetWord = w.find((word) => word.en === body.en);
+  if (targetWord) {
+    res.json(generateResponse("", 400, "Word already Exist"));
+  } else {
+    const t = await wordModel.create(
+      Object.assign(body, { groupID: groupItem[0]._id })
+    );
+    groupItem[0].wordCount++;
+    groupItem[0].save();
+    res.json(generateResponse(t));
+  }
 });
 
 router.put("/:id", async function (req, res, next) {

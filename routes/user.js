@@ -8,6 +8,7 @@ const { generateResponse } = ut;
 
 var jwt = require("jsonwebtoken");
 const { smsCodeModel } = require("../schemas/smsCodeSchema");
+const { wordGroupModel } = require("../schemas/wordGroupSchema");
 router.post("/exist", async function (req, res, next) {
   let b = req.body;
   let username = b.username;
@@ -52,6 +53,7 @@ router.post("/create", async function (req, res, next) {
     const t = await userModel.create(
       Object.assign(body, { password }, { source })
     );
+    await wordGroupModel.create({ creator: t._id, isDefault: true });
     res.json(generateResponse(t));
   } else {
     res.json(generateResponse("", 400, "user exist"));

@@ -5,9 +5,10 @@ const { Schema } = mongoose;
 
 const wordGroupSchema = new Schema(
   {
-    name: { type: String, default: "" },
+    name: { type: String, default: "Default" },
+    isDefault: { type: Boolean, default: false },
     creator: ObjectId,
-    groupDescription: { type: String, default: "" },
+    groupDescription: { type: String, default: "Group description." },
     groupCoverUrl: { type: String, default: "" },
     groupVideoUrl: { type: String, default: "" },
     groupAudioUrl: { type: String, default: "" },
