@@ -65,7 +65,7 @@ router.post("/", async function (req, res, next) {
   }
   if (groupItem.length !== 1)
     res.json(generateResponse("", 400, "Finding group failed."));
-  // 先去查找下这个group下面有没有已经存在该单词了。
+  // 先去查找下这个group下面有没有已经存在该单词了，也就是说，不同的group下面可以建立相同的单词
   let w = await wordModel.find({ groupID: groupItem[0]._id }).lean();
   let targetWord = w.find((word) => word.en === body.en);
   if (targetWord) {
