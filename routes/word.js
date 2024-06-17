@@ -1,8 +1,8 @@
-var express = require("express");
+const express = require("express");
 const { generateResponse, grabWordFromCambridge } = require("../utils/utils");
 const { wordModel } = require("../schemas/wordSchema");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
-var router = express.Router();
+const router = express.Router();
 
 router.get("/:id", async function (req, res, next) {
   try {
@@ -51,13 +51,15 @@ router.post("/bygroup", async function (req, res, next) {
 // 新建单词
 router.post("/", async function (req, res, next) {
   const body = req.body;
-  console.log(body);
+  if (body.en === undefined || body.en.trim() === "") {
+    res.json(generateResponse("", 400, "Please provide a word to save."));
+    return;
+  }
   const groupID = body.groupId;
   const u = req.tUser;
   Object.assign(body, { creator: u._id });
   let groupItem;
   // 如果不传groupID，就默认保存到default group中
-  console.log(groupID);
   if (groupID === undefined) {
     groupItem = await wordGroupModel.find({ isDefault: true });
   } else {
@@ -91,20 +93,45 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
-router.delete("/", async function (req, res, next) {
-  try {
-    let id = req.body.id;
-    let groupID = req.body.groupID;
-    let group = await wordGroupModel.find({ _id: groupID });
-    if (group.length != 1)
-      res.json(generateResponse("", 400, "Word group doesn't exist."));
-    group[0].wordCount--;
-    if (group[0].wordCount < 0) group[0].wordCount = 0;
-    group[0].save();
-    let doc = await wordModel.findByIdAndDelete(id).exec();
-    res.json(generateResponse(doc));
-  } catch (error) {
-    res.json(generateResponse("", 400, "fail"));
+// 删除某个单词
+router.post("/delete", async function (req, res, next) {
+  let id = req.body.id;
+  let groupId = req.body.groupID;
+  let group;
+  if (groupId === undefined) {
+    group = await wordGroupModel.find({ isDefault: true });
+  } else {
+    group = await wordGroupModel.find({ _id: groupId });
+  }
+  if (group.length != 1)
+    res.json(generateResponse("", 400, "Word group doesn't exist."));
+  group[0].wordCount--;
+  if (group[0].wordCount < 0) group[0].wordCount = 0;
+  group[0].save();
+  let doc = await wordModel.findByIdAndDelete(id).exec();
+  res.json(generateResponse(doc));
+});
+
+// 判断某个单词是否被收藏过了
+router.post("/search", async function (req, res, next) {
+  const body = req.body;
+  if (!body.en) {
+    res.json(generateResponse("", 400, "Please provide a word to search."));
+  } else {
+    const words = await wordModel.find({ en: body.en, creator: req.tUser._id });
+    res.json(generateResponse({ isLiked: words.length > 0 }));
   }
 });
+
+// 通过单词获取该单词的id
+router.post("/word/id", async function (req, res, next) {
+  let en = req.body.en;
+  if (en === undefined) {
+    res.json(generateResponse("", 400, ""));
+  } else {
+    let t = await wordModel.getId(en);
+    res.json(generateResponse(t));
+  }
+});
+
 module.exports = router;

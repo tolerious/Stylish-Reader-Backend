@@ -7,6 +7,8 @@ const wordGroupSchema = new Schema(
   {
     name: { type: String, default: "Default" },
     isDefault: { type: Boolean, default: false },
+    // 是否时官方的词组
+    isOfficial: { type: Boolean, default: false },
     creator: ObjectId,
     groupDescription: { type: String, default: "Group description." },
     groupCoverUrl: { type: String, default: "" },
@@ -21,14 +23,16 @@ const wordGroupSchema = new Schema(
     timestamps: true,
     statics: {
       getOnlyChildGroup(creator) {
-        return mongoose
-          .model("WordGroup")
-          .find({ creator: creator, parentGroupID: { $ne: "" } });
+        return mongoose.model("WordGroup").find({
+          creator: creator,
+          parentGroupID: { $ne: "" },
+        });
       },
       getPublicGroup() {
-        return mongoose
-          .model("WordGroup")
-          .find({ isPublic: true, parentGroupID: { $ne: "" } });
+        return mongoose.model("WordGroup").find({
+          isPublic: true,
+          parentGroupID: { $ne: "" },
+        });
       },
       getOnlyParentGroup(creator) {
         return mongoose

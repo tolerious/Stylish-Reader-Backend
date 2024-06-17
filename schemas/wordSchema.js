@@ -22,6 +22,9 @@ const wordSchema = new Schema(
       getWord(id) {
         return mongoose.model("Word").findOne({ _id: id });
       },
+      getId(en) {
+        return mongoose.model("Word").findOne({ en });
+      },
       getOneWord() {},
       getWordByGroup(groupID) {
         return mongoose.model("Word").find({ groupID });

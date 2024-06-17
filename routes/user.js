@@ -1,12 +1,12 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const rt = require("../schemas/userSchema");
 const md5 = require("md5");
 const { userModel } = rt;
 const ut = require("../utils/utils");
 const { generateResponse } = ut;
 
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const { smsCodeModel } = require("../schemas/smsCodeSchema");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
 router.post("/exist", async function (req, res, next) {
@@ -14,7 +14,6 @@ router.post("/exist", async function (req, res, next) {
   let username = b.username;
   if (username) {
     let t = await userModel.findOne({ username });
-    console.log(t);
     if (t) {
       res.json(generateResponse("", 200, "User exist"));
     } else {
