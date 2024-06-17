@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "pm2 delete all && pm2 start --env=production"
+    "dev": "pm2 delete all && pm2 start --env=production",
+    "start": "cross-env DB_URL=mongodb://127.0.0.1:27017/test ./bin/www"
   },
   "dependencies": {
     "@alicloud/credentials": "^2.2.6",
@@ -24,5 +25,8 @@
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
