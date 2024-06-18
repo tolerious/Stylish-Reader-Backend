@@ -5,5 +5,12 @@
 [See Here](https://github.com/tolerious/English-Burning-Frontend)
 
 ## Feature List
+- [x] 单词查询
+- [x] 词组创建
+- [x] 单词复习，Flash card
+- [x] 二维码分享
 
-- 没创建一个用户都需要为其船舰一个默认的单词组，添加单词后都放到这个组里面
+
+## Feature under development
+- [ ] 支持桌面端
+- [ ] 优化手机端支持
