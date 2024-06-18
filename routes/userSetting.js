@@ -1,11 +1,11 @@
-var express = require("express");
+const express = require("express");
 const { generateResponse, grabWordFromCambridge } = require("../utils/utils");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
-var router = express.Router();
+const router = express.Router();
 /* GET home page. */
 router.get("/", async function (req, res, next) {
   const u = req.tUser;
-  let r = await userSettingModel.find({ userID: u._id });
+  let r = await userSettingModel.findOne({ userID: u._id });
   res.json(generateResponse(r));
 });
 

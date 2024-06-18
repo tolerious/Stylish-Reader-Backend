@@ -5,22 +5,7 @@ const { Schema } = mongoose;
 const wordSchema = new Schema(
   {
     creator: ObjectId,
-    wordDetail: [
-      {
-        name: String,
-        property: String,
-        phonetic: String,
-        tags: [{ type: String, default: "" }],
-        dsenseObjList: [
-          {
-            phraseBlockObjList: [
-              { en: String, zh: String, phrase: String, sentence: [] },
-            ],
-            defBlockObjList: [{ en: String, zh: String, sentence: [] }],
-          },
-        ],
-      },
-    ],
+    en: String,
     groupID: ObjectId,
   },
   {
@@ -36,6 +21,9 @@ const wordSchema = new Schema(
       },
       getWord(id) {
         return mongoose.model("Word").findOne({ _id: id });
+      },
+      getId(en) {
+        return mongoose.model("Word").findOne({ en });
       },
       getOneWord() {},
       getWordByGroup(groupID) {

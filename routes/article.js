@@ -20,7 +20,6 @@ router.post("/", async function (req, res, next) {
   const u = req.tUser;
   Object.assign(body, { creator: u._id });
   const r = await articleModel.searchArticleByCreatorAndLink(u._id, body.link);
-  console.log(r);
   let t;
   if (r.length === 0) {
     t = await articleModel.create(body);
