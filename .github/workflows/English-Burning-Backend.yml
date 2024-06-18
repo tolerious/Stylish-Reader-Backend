@@ -37,6 +37,6 @@ jobs:
         # server ip
         IP: ${{ secrets.SERVER_IP_ADDRESS }}
         # shell to execute on server
-        # SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && git pull && pm2 delete all && cp ../ecosystem.config.js . && pnpm i && pm2 start --env=production"
-        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && ls -alh"
+        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && git pull && pm2 delete all && cp ../ecosystem.config.js . && pnpm i && pm2 start --env=production"
+        # SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && ls -alh"
 
