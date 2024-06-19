@@ -69,13 +69,15 @@ router.post("/", async function (req, res, next) {
     res.json(generateResponse("", 400, "Finding group failed."));
   // 先去查找下这个group下面有没有已经存在该单词了，也就是说，不同的group下面可以建立相同的单词
   let w = await wordModel.find({ groupID: groupItem[0]._id }).lean();
-  let targetWord = w.find((word) => word.en === body.en);
+  let targetWord = w.find((word) => word.en === body.en.toLowerCase());
   if (targetWord) {
     res.json(generateResponse("", 400, "Word already Exist"));
   } else {
-    const t = await wordModel.create(
-      Object.assign(body, { groupID: groupItem[0]._id })
-    );
+    const t = await wordModel.create({
+      ...body,
+      groupID: groupItem[0]._id,
+      en: body.en.toLowerCase(),
+    });
     groupItem[0].wordCount++;
     groupItem[0].save();
     res.json(generateResponse(t));
