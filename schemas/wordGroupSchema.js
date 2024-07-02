@@ -18,6 +18,8 @@ const wordGroupSchema = new Schema(
     parentGroupID: { type: String, default: "" },
     isPublic: { type: Boolean, default: false },
     wordCount: { type: Number, default: 0 },
+    // 词组对应的文章，视频链接，等所有资料链接
+    links: { type: Array, default: [] },
   },
   {
     timestamps: true,

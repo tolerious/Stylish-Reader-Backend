@@ -12,6 +12,7 @@ const articleSchema = new Schema(
     tags: [String],
     /** 文章链接 */
     link: { type: String, default: "" },
+    originalTranscriptUrl: { type: String, default: "" },
   },
 
   {
