@@ -12,7 +12,10 @@ const articleSchema = new Schema(
     tags: [String],
     /** 文章链接 */
     link: { type: String, default: "" },
+    // 以下字段仅针对Youtube网站
     originalTranscriptUrl: { type: String, default: "" },
+    /** 字幕（默认是英文字幕） */
+    transcriptData: { type: String, default: "" },
   },
 
   {
