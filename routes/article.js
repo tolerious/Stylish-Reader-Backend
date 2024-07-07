@@ -15,6 +15,16 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+router.post("/youtube", async function (req, res, next) {
+  const body = req.body;
+  const u = req.tUser;
+  const r = await articleModel.find({
+    creator: u._id,
+    youtubeVideoId: body.videoId,
+  });
+  res.json(generateResponse(r));
+});
+
 router.post("/", async function (req, res, next) {
   const body = req.body;
   const u = req.tUser;

@@ -15,8 +15,12 @@ const wordGroupRouter = require("./routes/wordGroup");
 const smsCodeRouter = require("./routes/smsCode");
 const auth = require("./middleware/auth");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+
 var app = express();
 
+app.use(bodyParser.json({ limit: "50mb" })); // 例如，设置为 50MB
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 mongoose.connect(process.env.DB_URL);
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

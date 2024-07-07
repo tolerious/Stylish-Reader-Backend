@@ -4,10 +4,11 @@ var router = express.Router();
 const qrcode = require("qrcode");
 
 const Parser = require("@postlight/parser");
+const { default: axios } = require("axios");
 
-router.get("/", async function (req, res, next) {
+router.get("/index", async function (req, res, next) {
   qrcode.toDataURL(
-    "https://englishburning.com",
+    "https://stylishreader.com",
     { version: 7 },
     function (err, url) {
       res.render("index", { title: url });

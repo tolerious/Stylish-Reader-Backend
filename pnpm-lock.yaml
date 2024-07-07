@@ -23,6 +23,9 @@ importers:
       axios:
         specifier: ^1.4.0
         version: 1.4.0(debug@2.6.9)
+      body-parse:
+        specifier: ^0.1.0
+        version: 0.1.0
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -232,6 +235,9 @@ packages:
   bluebird@2.11.0:
     resolution: {integrity: sha512-UfFSr22dmHPQqPP9XWHRhq+gWnHCYguQGkXQlbyPtW5qTnhFWA8/iXg765tH0cAjy7l/zPJ1aBTO0g5XgA7kvQ==, tarball: https://registry.npmmirror.com/bluebird/-/bluebird-2.11.0.tgz}
 
+  body-parse@0.1.0:
+    resolution: {integrity: sha512-k0PDF7vZZpspXlwoM8ywh9PIHZokooS0Rek4M8Vekoro7XuuaWVhjgTpdzIRrfKj5oLQahwjn621/4kG4d91xw==}
+
   body-parser@1.18.2:
     resolution: {integrity: sha512-XIXhPptoLGNcvFyyOzjNXCjDYIbYj4iuXO0VU9lM0f3kYdG0ar5yg7C+pIc3OyoTlZXDu5ObpLTmS2Cgp89oDg==}
     engines: {node: '>= 0.8'}
@@ -414,7 +420,6 @@ packages:
 
   difflib@https://codeload.github.com/postlight/difflib.js/tar.gz/32e8e38c7fcd935241b9baab71bb432fd9b166ed:
     resolution: {tarball: https://codeload.github.com/postlight/difflib.js/tar.gz/32e8e38c7fcd935241b9baab71bb432fd9b166ed}
-    name: difflib
     version: 0.2.6
 
   dijkstrajs@1.0.3:
@@ -1508,6 +1513,8 @@ snapshots:
 
   bluebird@2.11.0: {}
 
+  body-parse@0.1.0: {}
+
   body-parser@1.18.2:
     dependencies:
       bytes: 3.0.0
@@ -1849,7 +1856,7 @@ snapshots:
       path-exists: 4.0.0
 
   follow-redirects@1.15.2(debug@2.6.9):
-    dependencies:
+    optionalDependencies:
       debug: 2.6.9
 
   forever-agent@0.6.1: {}

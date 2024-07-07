@@ -13,9 +13,12 @@ const articleSchema = new Schema(
     /** 文章链接 */
     link: { type: String, default: "" },
     // 以下字段仅针对Youtube网站
-    originalTranscriptUrl: { type: String, default: "" },
-    /** 字幕（默认是英文字幕） */
-    transcriptData: { type: String, default: "" },
+    /** 英文字幕 */
+    enTranscriptData: { type: String, default: "" },
+    /** 中文字幕 */
+    cnTranscriptData: { type: String, default: "" },
+    /** 只针对YouTube网站有效 */
+    youtubeVideoId: { type: String, default: "" },
   },
 
   {
