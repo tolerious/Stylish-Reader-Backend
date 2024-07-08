@@ -24,9 +24,14 @@ const auth = function (req, res, next) {
   try {
     let token = req.headers.authorization.replace(/bearer/i, "").trim();
     // TODO: string 'english-burning' can be a global or config variable
-    if (!token) res.json(generateResponse("", 401, "user info not correct"));
+    if (!token || token === "null" || token === "undefined") {
+      console.log("token is null");
+      res.json(generateResponse("", 401, "user info not correct"));
+      return;
+    }
     jwt.verify(token, "english-burning", async (err, decode) => {
       if (err != null) {
+        console.log("not login");
         res.json(generateResponse("", 401, "username or password not correct"));
         return;
       }
@@ -36,10 +41,12 @@ const auth = function (req, res, next) {
         req.tUser = users[0];
         next();
       } else {
+        console.log("not login");
         res.json(generateResponse("", 401, "user info not correct"));
       }
     });
   } catch (error) {
+    console.log("catch error in auth.js");
     res.json(generateResponse(error, 401, "user info not correct"));
   }
 };
