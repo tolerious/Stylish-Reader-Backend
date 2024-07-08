@@ -55,6 +55,13 @@ router.post("/", async function (req, res, next) {
     res.json(generateResponse("", 400, "Please provide a word to save."));
     return;
   }
+  if (body.en.trim().split(" ").length > 1) {
+    res.json(
+      generateResponse("", 400, "Phrase is not allowed to save as a word.")
+    );
+    return;
+  }
+
   const groupID = body.groupId;
   const u = req.tUser;
   Object.assign(body, { creator: u._id });

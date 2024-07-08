@@ -22,7 +22,9 @@ const auth = function (req, res, next) {
     return;
   }
   try {
+    console.log(req.headers);
     let token = req.headers.authorization.replace(/bearer/i, "").trim();
+    console.log("token", token, typeof token);
     // TODO: string 'english-burning' can be a global or config variable
     if (!token || token === "null" || token === "undefined") {
       console.log("token is null");
