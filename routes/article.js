@@ -15,6 +15,16 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+router.get("/youtube/list", async function (req, res, next) {
+  const u = req.tUser;
+  const r = await articleModel.find(
+    { tags: { $elemMatch: { $eq: "youtube" } }, creator: u._id },
+    "title _id"
+  );
+  res.json(generateResponse(r));
+});
+
+// 查询是否存在youtube视频
 router.post("/youtube", async function (req, res, next) {
   const body = req.body;
   const u = req.tUser;
