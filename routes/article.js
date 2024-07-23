@@ -28,7 +28,7 @@ router.get("/youtube/list", async function (req, res, next) {
   const u = req.tUser;
   const r = await articleModel.find(
     { tags: { $elemMatch: { $eq: "youtube" } }, creator: u._id },
-    "title _id createdAt"
+    "title _id createdAt youtubeVideoId"
   );
   res.json(generateResponse(r));
 });
