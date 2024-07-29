@@ -17,7 +17,11 @@ const auth = require("./middleware/auth");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+require("dotenv").config();
+
 var app = express();
+
+console.log(process.env);
 
 app.use(bodyParser.json({ limit: "50mb" })); // 例如，设置为 50MB
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
