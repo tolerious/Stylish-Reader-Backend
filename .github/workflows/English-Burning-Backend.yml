@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.20.0]
+        node-version: [18.19.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -37,4 +37,5 @@ jobs:
         # server ip
         IP: ${{ secrets.SERVER_IP_ADDRESS }}
         # shell to execute on server
-        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && /bin/bash ./kill_pm2.sh && cp ../ecosystem.config.js . && pnpm i && pm2 start --env=production"
+        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && /bin/bash ./kill_pm2.sh && cp ../ecosystem.config.js ."
+        SHELL: "pnpm i && pm2 start --env=production"
