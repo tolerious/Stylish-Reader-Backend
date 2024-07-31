@@ -3,7 +3,8 @@ const { Schema, default: mongoose } = require("mongoose");
 
 const tokenSchema = new Schema({
   text: String,
-  isHightLight: Boolean,
+  isHightLight: { type: Boolean, default: false },
+  uuid: String,
 });
 
 const articleTokenSchema = new Schema({
@@ -11,7 +12,7 @@ const articleTokenSchema = new Schema({
   tokens: {
     // tStartTime作为key
     type: Map,
-    of: [tokenSchema],
+    of: [{ originTextString: String, segs: [tokenSchema] }],
   },
 });
 

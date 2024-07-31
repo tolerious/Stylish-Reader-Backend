@@ -45,7 +45,7 @@ app.use("/sms", smsCodeRouter);
 app.use("/logic", logicRouter);
 app.use("/wordgroup", wordGroupRouter);
 app.use("/usersetting", userSettingRouter);
-app.use("articletoken", articleTokenRouter);
+app.use("/articletoken", articleTokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
