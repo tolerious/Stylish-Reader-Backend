@@ -1,14 +1,15 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var mongoose = require("mongoose");
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/user");
-var articleRouter = require("./routes/article");
-var wordRouter = require("./routes/word");
-var logicRouter = require("./routes/logic");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/user");
+const articleRouter = require("./routes/article");
+const wordRouter = require("./routes/word");
+const logicRouter = require("./routes/logic");
+const articleTokenRouter = require("./routes/articleToken.cjs");
 const loggerMiddleware = require("./middleware/logger");
 const userSettingRouter = require("./routes/userSetting");
 const wordGroupRouter = require("./routes/wordGroup");
@@ -19,7 +20,7 @@ const bodyParser = require("body-parser");
 
 require("dotenv").config();
 
-var app = express();
+const app = express();
 
 console.log(process.env);
 
@@ -46,6 +47,7 @@ app.use("/sms", smsCodeRouter);
 app.use("/logic", logicRouter);
 app.use("/wordgroup", wordGroupRouter);
 app.use("/usersetting", userSettingRouter);
+app.use("articletoken", articleTokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
