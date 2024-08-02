@@ -28,20 +28,31 @@ async function convertDataToToken(articleId) {
   });
   const m = new articleTokenModel({
     articleId: article._id,
+    youtubeVideoId: article.youtubeVideoId,
     tokens: map,
   });
   return await m.save();
 }
 
+router.post("/detail", async function (req, res, next) {
+  const youtubeVideoId = req.body.youtubeVideoId;
+  if (!youtubeVideoId) {
+    res.json(generateResponse("", 400, "youtubeVideoId is required"));
+    return;
+  }
+  const at = await articleTokenModel.findOne({ youtubeVideoId });
+  res.json(generateResponse(at));
+});
+
 router.get("/", async function (req, res, next) {
   const articles = await articleModel.find({}).lean();
   articles.forEach(async (article, index) => {
-    const a = await articleModel.findById(article._id);
+    const a = await articleTokenModel.findOne({ articleId: article._id });
     if (a) {
-      console.log(`第 ${index + 1} 篇文章的token已经存在`);
+      console.log(`第 ${index + 1} 篇文章的token已经存在。`);
     } else {
       const t = await convertDataToToken(article._id);
-      console.log(`第 ${index + 1} 篇文章的token已经生成`);
+      console.log(`第 ${index + 1} 篇文章的token生成成功。`);
     }
   });
   res.json(generateResponse(""));

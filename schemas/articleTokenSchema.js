@@ -9,6 +9,7 @@ const tokenSchema = new Schema({
 
 const articleTokenSchema = new Schema({
   articleId: ObjectId,
+  youtubeVideoId: String,
   tokens: {
     // tStartTime作为key
     type: Map,
