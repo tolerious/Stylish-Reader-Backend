@@ -6,8 +6,8 @@ const { articleModel } = require("../schemas/articleSchema");
 const { generateResponse } = require("../utils/utils");
 module.exports = router;
 
-router.get("/", async function (req, res, next) {
-  const article = await articleModel.findById("66952140dae8d588d9484ee7");
+async function convertDataToToken(articleId) {
+  const article = await articleModel.findById(articleId);
   const enData = article.enTranscriptData;
   const events = JSON.parse(enData).events;
   const map = new Map();
@@ -27,9 +27,22 @@ router.get("/", async function (req, res, next) {
     });
   });
   const m = new articleTokenModel({
-    articleId: "66952140dae8d588d9484ee7",
+    articleId: article._id,
     tokens: map,
   });
-  await m.save();
-  res.json(generateResponse(events));
+  return await m.save();
+}
+
+router.get("/", async function (req, res, next) {
+  const articles = await articleModel.find({}).lean();
+  articles.forEach(async (article, index) => {
+    const a = await articleModel.findById(article._id);
+    if (a) {
+      console.log(`第 ${index + 1} 篇文章的token已经存在`);
+    } else {
+      const t = await convertDataToToken(article._id);
+      console.log(`第 ${index + 1} 篇文章的token已经生成`);
+    }
+  });
+  res.json(generateResponse(""));
 });
