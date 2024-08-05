@@ -13,7 +13,7 @@ const articleTokenSchema = new Schema({
   tokens: {
     // tStartTime作为key
     type: Map,
-    of: [{ originTextString: String, segs: [tokenSchema] }],
+    of: { originTextString: String, segs: [tokenSchema] },
   },
 });
 
