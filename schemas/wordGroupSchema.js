@@ -20,6 +20,8 @@ const wordGroupSchema = new Schema(
     wordCount: { type: Number, default: 0 },
     // 词组对应的文章，视频链接，等所有资料链接
     links: { type: Array, default: [] },
+    // 通过 stylish reader 网站的youtube视频添加的词组，会有这个字段
+    youtubeId:{type:String,default:''}
   },
   {
     timestamps: true,
