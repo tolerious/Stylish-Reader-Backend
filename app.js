@@ -14,6 +14,7 @@ const loggerMiddleware = require("./middleware/logger");
 const userSettingRouter = require("./routes/userSetting");
 const wordGroupRouter = require("./routes/wordGroup");
 const smsCodeRouter = require("./routes/smsCode");
+const phraseRouter = require("./routes/phrase");
 const auth = require("./middleware/auth");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -46,6 +47,7 @@ app.use("/logic", logicRouter);
 app.use("/wordgroup", wordGroupRouter);
 app.use("/usersetting", userSettingRouter);
 app.use("/articletoken", articleTokenRouter);
+app.use("/phrase", phraseRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const md5 = require("md5");
 const rt = require("../schemas/articleSchema");
 const { articleModel } = rt;

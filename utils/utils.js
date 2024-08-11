@@ -4,7 +4,7 @@ const cheerio = require("cheerio");
 function generateResponse(data = "", code = 200, msg = "success") {
   return {
     code,
-    msg,
+    msg: code !== 200 && msg === "success" ? "fail" : msg,
     data,
   };
 }
