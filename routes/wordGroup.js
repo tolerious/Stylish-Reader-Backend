@@ -28,13 +28,24 @@ router.get("/child", async function (req, res, next) {
   let t = await wordGroupModel.getOnlyChildGroup(user._id);
   res.json(generateResponse(t));
 });
+
 // 创建词组
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
   let body = req.body;
-  Object.assign(body, { creator: user._id, parentGroupID: "" });
-  let t = await wordGroupModel.create(body);
-  res.json(generateResponse(t));
+  const { name } = req.body;
+  const groups = await wordGroupModel.find({ name: name });
+  if (groups.length > 0) {
+    res.json(generateResponse(groups[0], 400));
+  } else {
+    Object.assign(body, {
+      nickName: name,
+      creator: user._id,
+      parentGroupID: "",
+    });
+    let t = await wordGroupModel.create(body);
+    res.json(generateResponse(t));
+  }
 });
 
 router.post("/detail", async function (req, res, next) {

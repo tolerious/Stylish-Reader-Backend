@@ -2,6 +2,7 @@ const express = require("express");
 const { generateResponse, grabWordFromCambridge } = require("../utils/utils");
 const { wordModel } = require("../schemas/wordSchema");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
+const { userSettingModel } = require("../schemas/userSettingsSchema");
 const router = express.Router();
 
 router.get("/:id", async function (req, res, next) {
@@ -69,6 +70,15 @@ router.post("/", async function (req, res, next) {
   // 如果不传groupID，就默认保存到default group中
   if (groupID === undefined) {
     groupItem = await wordGroupModel.find({ isDefault: true, creator: u._id });
+    if (groupItem.length === 0) {
+      // 创建默认词组，默认词组在创建用户的时候也创建了，下面的代码如果执行了，只能说明是认为手动删除了数据库中的默认词组
+      groupItem = await wordGroupModel.create({ creator: u, isDefault: true });
+      // 更新userSettings表
+      const userSettings = await userSettingModel.find({ userID: u._id });
+      const userSetting = userSettings[0];
+      userSetting.defaultGroupID = groupItem._id;
+      await userSetting.save();
+    }
   } else {
     groupItem = await wordGroupModel.find({ _id: groupID });
   }

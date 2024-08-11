@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const { smsCodeModel } = require("../schemas/smsCodeSchema");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
+
 router.post("/exist", async function (req, res, next) {
   let b = req.body;
   let username = b.username;
