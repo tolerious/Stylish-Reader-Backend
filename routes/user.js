@@ -54,7 +54,7 @@ router.post("/create", async function (req, res, next) {
     const t = await userModel.create(
       Object.assign(body, { password }, { source })
     );
-    const g = await wordGroupModel.create({ creator: t._id, isDefault: true });
+    const g = await wordGroupModel.create({ creator: t._id });
     await userSettingModel.create({ userID: t._id, defaultGroupID: g._id });
     res.json(generateResponse(t));
   } else {

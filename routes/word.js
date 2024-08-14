@@ -4,6 +4,7 @@ const { wordModel } = require("../schemas/wordSchema");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 router.get("/:id", async function (req, res, next) {
   try {
@@ -66,39 +67,29 @@ router.post("/", async function (req, res, next) {
   const groupID = body.groupId;
   const u = req.tUser;
   Object.assign(body, { creator: u._id });
-  let groupItem;
-  // 如果不传groupID，就默认保存到default group中
-  if (groupID === undefined) {
-    groupItem = await wordGroupModel.find({ isDefault: true, creator: u._id });
-    if (groupItem.length === 0) {
-      // 创建默认词组，默认词组在创建用户的时候也创建了，下面的代码如果执行了，只能说明是认为手动删除了数据库中的默认词组
-      groupItem = await wordGroupModel.create({ creator: u, isDefault: true });
-      // 更新userSettings表
-      const userSettings = await userSettingModel.find({ userID: u._id });
-      const userSetting = userSettings[0];
-      userSetting.defaultGroupID = groupItem._id;
-      await userSetting.save();
-    }
-  } else {
-    groupItem = await wordGroupModel.find({ _id: groupID });
+  // 必须传 groupId
+  if (!mongoose.Types.ObjectId.isValid(groupID)) {
+    res.json(generateResponse("", 400, "Invalid groupId"));
+    return;
   }
-  if (groupItem.length !== 1) {
-    res.json(generateResponse("", 400, "Finding group failed."));
+  const groupItem = await wordGroupModel.findById(groupID);
+  if (!groupItem) {
+    res.json(generateResponse("", 400, "Group not exist."));
     return;
   }
   // 先去查找下这个group下面有没有已经存在该单词了，也就是说，不同的group下面可以建立相同的单词
-  let w = await wordModel.find({ groupID: groupItem[0]._id }).lean();
+  let w = await wordModel.find({ groupID: groupItem._id }).lean();
   let targetWord = w.find((word) => word.en === body.en.toLowerCase());
   if (targetWord) {
     res.json(generateResponse("", 400, "Word already Exist"));
   } else {
     const t = await wordModel.create({
       ...body,
-      groupID: groupItem[0]._id,
+      groupID: groupItem._id,
       en: body.en.toLowerCase(),
     });
-    groupItem[0].wordCount++;
-    await groupItem[0].save();
+    groupItem.wordCount++;
+    await groupItem.save();
     res.json(generateResponse(t));
   }
 });
@@ -117,18 +108,21 @@ router.put("/:id", async function (req, res, next) {
 // 删除某个单词
 router.post("/delete", async function (req, res, next) {
   let id = req.body.id;
-  let groupId = req.body.groupID;
-  let group;
-  if (groupId === undefined) {
-    group = await wordGroupModel.find({ isDefault: true });
-  } else {
-    group = await wordGroupModel.find({ _id: groupId });
+  let groupId = req.body.groupId;
+  const user = req.tUser;
+  const words = await wordModel.find({ creator: user._id, _id: id });
+  if (words.length === 0) {
+    res.json(generateResponse("", 400, "Word not found"));
+    return;
   }
-  if (group.length != 1)
-    res.json(generateResponse("", 400, "Word group doesn't exist."));
-  group[0].wordCount--;
-  if (group[0].wordCount < 0) group[0].wordCount = 0;
-  group[0].save();
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    res.json(generateResponse("", 400, "GroupId is invalid"));
+    return;
+  }
+  const group = await wordGroupModel.findById(groupId);
+  group.wordCount--;
+  if (group.wordCount < 0) group[0].wordCount = 0;
+  await group.save();
   let doc = await wordModel.findByIdAndDelete(id).exec();
   res.json(generateResponse(doc));
 });

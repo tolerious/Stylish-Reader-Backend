@@ -9,7 +9,6 @@ const wordGroupSchema = new Schema(
     name: { type: String, default: "Default" },
     // 用作页面上显示的名字
     nickName: { type: String, default: "Default" },
-    isDefault: { type: Boolean, default: false },
     // 是否时官方的词组
     isOfficial: { type: Boolean, default: false },
     creator: ObjectId,
