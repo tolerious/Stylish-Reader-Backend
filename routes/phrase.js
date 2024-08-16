@@ -12,7 +12,7 @@ router.post("/", async function (req, res, next) {
     const p = await phraseModel.create({ creator: u, en, groupId });
     res.json(generateResponse(p));
   } else {
-    res.json(generateResponse("phrase exist", 400));
+    res.json(generateResponse(phrases[0], 400, "词组已存在"));
   }
 });
 

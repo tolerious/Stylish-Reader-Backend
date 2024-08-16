@@ -53,6 +53,8 @@ router.post("/bygroup", async function (req, res, next) {
 // 新建单词
 router.post("/", async function (req, res, next) {
   const body = req.body;
+  const groupID = body.groupId;
+  const u = req.tUser;
   if (body.en === undefined || body.en.trim() === "") {
     res.json(generateResponse("", 400, "Please provide a word to save."));
     return;
@@ -64,14 +66,13 @@ router.post("/", async function (req, res, next) {
     return;
   }
 
-  const groupID = body.groupId;
-  const u = req.tUser;
-  Object.assign(body, { creator: u._id });
   // 必须传 groupId
   if (!mongoose.Types.ObjectId.isValid(groupID)) {
     res.json(generateResponse("", 400, "Invalid groupId"));
     return;
   }
+  Object.assign(body, { creator: u._id });
+
   const groupItem = await wordGroupModel.findById(groupID);
   if (!groupItem) {
     res.json(generateResponse("", 400, "Group not exist."));

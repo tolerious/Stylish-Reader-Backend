@@ -36,7 +36,7 @@ router.post("/", async function (req, res, next) {
   const { name } = req.body;
   const groups = await wordGroupModel.find({ name: name });
   if (groups.length > 0) {
-    res.json(generateResponse(groups[0], 200));
+    res.json(generateResponse(groups[0], 200, "Group exist."));
   } else {
     Object.assign(body, {
       nickName: name,
