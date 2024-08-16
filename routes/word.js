@@ -41,12 +41,13 @@ router.post("/list", async function (req, res, next) {
 });
 
 router.post("/bygroup", async function (req, res, next) {
-  let b = req.body;
+  const b = req.body;
+  const user = req.tUser;
   if (!b.groupID) {
     res.json(generateResponse("", 400, "Json format failed."));
     return;
   }
-  let n = await wordModel.find({ groupID: b.groupID });
+  const n = await wordModel.find({ groupID: b.groupID, creator: user._id });
   res.json(generateResponse(n));
 });
 
