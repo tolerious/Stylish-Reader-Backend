@@ -32,7 +32,7 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}  # SSH 服务器的指纹
     - name: Copy files to remote server
       run: |
-        ls -alh && scp -r ./ root@api.stylishreader.com:/var/www/html/test  # 复制代码到远程服务器
+        ls -alh && scp -r . root@api.stylishreader.com:/var/www/html/test  # 复制代码到远程服务器
     - name: Server Shell
       # You may pin to the exact commit or the version.
       # uses: tzzs/server-shell@e6313d235c16b3b51c67277ba2ec70a55e43c0d6
