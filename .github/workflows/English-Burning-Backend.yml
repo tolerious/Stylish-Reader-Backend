@@ -45,4 +45,4 @@ jobs:
         # server ip
         IP: ${{ secrets.SERVER_IP_ADDRESS }}
         # shell to execute on server
-        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && cp ../ecosystem.config.js . && pnpm i && pm2 restart all --env=production ecosystem.config.js"
+        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && cp ../ecosystem.config.js . && pnpm i && pm2 restart all ecosystem.config.js --env=production"
