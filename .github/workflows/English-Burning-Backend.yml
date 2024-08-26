@@ -25,6 +25,14 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2  # 使用 SSH 密钥进行身份验证
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}  # 从 GitHub Secrets 中读取私钥
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}  # SSH 服务器的指纹
+    - name: Copy files to remote server
+      run: |
+        ls -alh && scp -r * root@api.stylishreader.com:/var/www/html/English-Burning-Backend  # 复制代码到远程服务器
     - name: Server Shell
       # You may pin to the exact commit or the version.
       # uses: tzzs/server-shell@e6313d235c16b3b51c67277ba2ec70a55e43c0d6
@@ -37,4 +45,4 @@ jobs:
         # server ip
         IP: ${{ secrets.SERVER_IP_ADDRESS }}
         # shell to execute on server
-        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && /bin/bash ./kill_pm2.sh && cp ../ecosystem.config.js . && pnpm i && pm2 start --env=production"
+        SHELL: "source /etc/profile && cd /var/www/html/English-Burning-Backend/ && cp ../ecosystem.config.js . && pnpm i && pm2 restart ecosystem.config.js --env=production"
