@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const { articleTokenModel } = require("../schemas/articleTokenSchema");
 const { articleModel } = require("../schemas/articleSchema");
 const { generateResponse } = require("../utils/utils");
+const mongoose = require("mongoose");
 module.exports = router;
 
 async function convertDataToToken(articleId) {
@@ -50,6 +51,26 @@ router.post("/detail", async function (req, res, next) {
   }
   const at = await articleTokenModel.findOne({ youtubeVideoId });
   res.json(generateResponse(at));
+});
+
+//
+router.post("/", async function (req, res, next) {
+  const { articleId } = req.body;
+  if (!articleId) {
+    res.json(generateResponse("", 400, "articleId is required"));
+    return;
+  }
+  if (!mongoose.Types.ObjectId.isValid(articleId)) {
+    res.json(generateResponse("", 400, "articleId is invalid"));
+    return;
+  }
+  const article = await articleModel.findById(articleId);
+  if (!article) {
+    res.json(generateResponse("", 400, "article not found"));
+    return;
+  }
+  const t = await convertDataToToken(articleId);
+  res.json(generateResponse(t));
 });
 
 router.get("/", async function (req, res, next) {
