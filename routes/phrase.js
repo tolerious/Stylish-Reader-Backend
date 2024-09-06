@@ -6,10 +6,10 @@ const { generateResponse } = require("../utils/utils");
 router.post("/", async function (req, res, next) {
   const body = req.body;
   const u = req.tUser;
-  const { en, groupId } = body;
-  const phrases = await phraseModel.find({ creator: u, en, groupId });
+  const { en, groupId, cn } = body;
+  const phrases = await phraseModel.find({ creator: u, en, cn, groupId });
   if (phrases.length === 0) {
-    const p = await phraseModel.create({ creator: u, en, groupId });
+    const p = await phraseModel.create({ creator: u, en, cn, groupId });
     res.json(generateResponse(p));
   } else {
     res.json(generateResponse(phrases[0], 400, "词组已存在"));
