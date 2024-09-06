@@ -6,11 +6,11 @@ const phraseSchema = new Schema(
   {
     creator: ObjectId,
     en: String,
+    cn: String,
     groupId: ObjectId,
   },
   {
     timestamps: true,
-    
   }
 );
 
