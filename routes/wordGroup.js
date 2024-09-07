@@ -49,7 +49,10 @@ router.post("/", async function (req, res, next) {
         user
       );
       if (groups.length === 0) {
-        const g = await wordGroupModel.create(req.body);
+        const g = await wordGroupModel.create({
+          ...req.body,
+          creator: user._id,
+        });
         res.json(generateResponse(g, 200));
       } else {
         const g = groups[0];
