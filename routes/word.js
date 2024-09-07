@@ -151,4 +151,11 @@ router.post("/word/id", async function (req, res, next) {
   }
 });
 
+// 获取用户所有的单词
+router.post("/whole", async function (req, res, next) {
+  const user = req.tUser;
+  const words = await wordModel.find({ creator: user });
+  res.json(generateResponse(words));
+});
+
 module.exports = router;
