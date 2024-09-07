@@ -44,7 +44,7 @@ router.post("/", async function (req, res, next) {
         res.json(generateResponse("", 400, "data format not correct"));
         return;
       }
-      const groups = await wordGroupModel.getGroupsByOriginalPageUrl(
+      const groups = await wordGroupModel.getGroupsByOriginalPageUrlAndUserId(
         originalPageUrl,
         user
       );
