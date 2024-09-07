@@ -153,9 +153,7 @@ router.post("/word/id", async function (req, res, next) {
 
 // 获取用户所有的单词
 router.post("/whole", async function (req, res, next) {
-  console.log("hit...");
   const user = req.tUser;
-  console.log(user);
   const words = await wordModel.find({ creator: user });
   res.json(generateResponse(words));
 });
