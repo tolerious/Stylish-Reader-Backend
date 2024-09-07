@@ -1,5 +1,5 @@
 const express = require("express");
-const { generateResponse } = require("../utils/utils");
+const { generateResponse, generateBadResponse } = require("../utils/utils");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
 const router = express.Router();
@@ -29,22 +29,53 @@ router.get("/child", async function (req, res, next) {
   res.json(generateResponse(t));
 });
 
-// 创建词组
+// 创建词组,createdSource必传
 router.post("/", async function (req, res, next) {
   let user = req.tUser;
-  let body = req.body;
-  const { name } = req.body;
-  const groups = await wordGroupModel.find({ name: name });
-  if (groups.length > 0) {
-    res.json(generateResponse(groups[0], 200, "Group exist."));
-  } else {
-    Object.assign(body, {
-      nickName: name,
-      creator: user._id,
-      parentGroupID: "",
-    });
-    let t = await wordGroupModel.create(body);
-    res.json(generateResponse(t));
+  // 检查创建来源
+  const { createdSource, originalPageUrl, name } = req.body;
+  if (!createdSource) {
+    res.json(generateResponse("", 400, "data format not correct"));
+    return;
+  }
+  switch (createdSource) {
+    case "extension": {
+      if (!originalPageUrl) {
+        res.json(generateResponse("", 400, "data format not correct"));
+        return;
+      }
+      const groups = await wordGroupModel.getGroupsByOriginalPageUrl(
+        originalPageUrl,
+        user
+      );
+      if (groups.length === 0) {
+        const g = await wordGroupModel.create(req.body);
+        res.json(generateResponse(g, 200));
+      } else {
+        const g = groups[0];
+        res.json(generateResponse(g, 200));
+      }
+      return;
+    }
+    case "manually": {
+      if (!name) {
+        res.json(generateBadResponse());
+      }
+      const groups = await wordGroupModel.getGroupByNameAndUserId(name, user);
+      if (groups.length === 0) {
+        const g = await wordGroupModel.create({
+          ...req.body,
+          creator: user._id,
+        });
+        res.json(generateResponse(g));
+      } else {
+        res.json(generateResponse(groups[0], 200, "exist"));
+      }
+      return;
+    }
+    default:
+      res.json(generateResponse("", 400));
+      break;
   }
 });
 
@@ -57,6 +88,7 @@ router.post("/detail", async function (req, res, next) {
   else g = Object.assign(g, { hasChild: false });
   res.json(generateResponse(g));
 });
+
 router.delete("/", async function (req, res, next) {
   let id = req.body.id;
   let group = await wordGroupModel.findById(id);
@@ -77,6 +109,7 @@ router.delete("/", async function (req, res, next) {
     res.json(generateResponse(t));
   }
 });
+
 router.get("/public", async function (req, res, next) {
   let groupList = await wordGroupModel.getPublicGroup();
   res.json(generateResponse(groupList));

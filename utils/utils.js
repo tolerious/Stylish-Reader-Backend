@@ -9,6 +9,14 @@ function generateResponse(data = "", code = 200, msg = "success") {
   };
 }
 
+function generateBadResponse(data = "", msg = "Bad Request") {
+  return {
+    code: 400,
+    msg,
+    data,
+  };
+}
+
 async function grabWordFromCambridge(word) {
   let url = `https://dictionary.cambridge.org/dictionary/english-chinese-simplified/${word}`;
   let r = await axios.get(url);
@@ -209,4 +217,8 @@ async function grabWordFromCambridge(word) {
   return entryBodyElList;
 }
 
-module.exports = { generateResponse, grabWordFromCambridge };
+module.exports = {
+  generateResponse,
+  grabWordFromCambridge,
+  generateBadResponse,
+};
