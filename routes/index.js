@@ -1,6 +1,6 @@
-var express = require("express");
+const express = require("express");
 const { generateResponse, grabWordFromCambridge } = require("../utils/utils");
-var router = express.Router();
+const router = express.Router();
 const qrcode = require("qrcode");
 
 const Parser = require("@postlight/parser");
@@ -14,6 +14,14 @@ router.get("/index", async function (req, res, next) {
       res.render("index", { title: url });
     }
   );
+});
+
+router.post("/youdao", async function (req, res, next) {
+  const word = req.body.word;
+  const url = `https://dict.youdao.com/dictvoice?type=1&audio=${word}`;
+  const d = await axios({ url, method: "GET", responseType: "stream" });
+  res.setHeader("Content-Type", "audio/mpeg");
+  d.data.pipe(res);
 });
 
 router.post("/grab", async function (req, res, next) {
