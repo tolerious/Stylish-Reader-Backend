@@ -10,9 +10,14 @@ const auth = function (req, res, next) {
 
   if (
     // TODO: This array should be a global array or a array in a global file
-    (["/logic/login", "/test", "/grab", "/user/", "/youdao/"].indexOf(
-      req.originalUrl
-    ) > -1 &&
+    ([
+      "/logic/login",
+      "/test",
+      "/grab",
+      "/user/",
+      "/youdao/",
+      "/translation/content",
+    ].indexOf(req.originalUrl) > -1 &&
       (req.method === "POST" || req.method === "GET")) ||
     rule.test(req.originalUrl) ||
     userRegisterRule.test(req.originalUrl) ||
