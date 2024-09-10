@@ -58,6 +58,9 @@ router.post("/translation/content/", async function (req, res, next) {
         const zh = $(element).find(".trans");
         dicList.push({ pos: $(ciXing).text(), zh: $(zh).text() });
       });
+      const dictBookSecond = $(".dict-module .trans-container .trans-content");
+      dicList.push({ pos: "", zh: $(dictBookSecond).text() });
+      console.log(dicList);
       res.json(generateResponse({ dicList, phonetic }));
     })
     .catch((error) => {
