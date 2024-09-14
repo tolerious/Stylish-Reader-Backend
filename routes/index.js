@@ -37,36 +37,24 @@ router.post("/translation/content/", async function (req, res, next) {
   const textToBeTranslated = word;
   const url = `https://dict.youdao.com/result?word=${textToBeTranslated}&lang=en`;
   let dicList = [];
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        res.json(generateBadResponse(response.statusText));
-        return;
-      }
-      return response.text();
-    })
-    .then((html) => {
-      const $ = cheerio.load(html);
-      const dictBook = $(".basic .word-exp");
-      let phonetic = "";
-      const yinBiao = $(".phone_con .phonetic");
-      yinBiao.each((index, element) => {
-        phonetic += $(element).text() + "  ";
-      });
-      dictBook.each((index, element) => {
-        const ciXing = $(element).find(".pos");
-        const zh = $(element).find(".trans");
-        dicList.push({ pos: $(ciXing).text(), zh: $(zh).text() });
-      });
-      const dictBookSecond = $(".dict-module .trans-container .trans-content");
-      dicList.push({ pos: "", zh: $(dictBookSecond).text() });
-      console.log(dicList);
-      res.json(generateResponse({ dicList, phonetic }));
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-      res.json(generateBadResponse());
-    });
+  const a = await axios(url);
+
+  const $ = cheerio.load(a.data);
+  const dictBook = $(".basic .word-exp");
+  let phonetic = "";
+  const yinBiao = $(".phone_con .phonetic");
+  yinBiao.each((index, element) => {
+    phonetic += $(element).text() + "  ";
+  });
+  dictBook.each((index, element) => {
+    const ciXing = $(element).find(".pos");
+    const zh = $(element).find(".trans");
+    dicList.push({ pos: $(ciXing).text(), zh: $(zh).text() });
+  });
+  const dictBookSecond = $(".dict-module .trans-container .trans-content");
+  dicList.push({ pos: "", zh: $(dictBookSecond).text() });
+  console.log(dicList);
+  res.json(generateResponse({ dicList, phonetic }));
 });
 
 router.post("/grab", async function (req, res, next) {
