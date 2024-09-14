@@ -34,7 +34,7 @@ router.post("/translation/content/", async function (req, res, next) {
     res.json(generateBadResponse());
     return;
   }
-  const textToBeTranslated = word;
+  const textToBeTranslated = word.replaceAll("&", "");
   const url = `https://dict.youdao.com/result?word=${textToBeTranslated}&lang=en`;
   let dicList = [];
   const a = await axios(url);
