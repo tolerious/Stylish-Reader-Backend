@@ -31,6 +31,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # 从 GitHub Secrets 中读取私钥
         known_hosts: ${{ secrets.KNOWN_HOSTS }}  # SSH 服务器的指纹
     - name: Copy files to remote server
+      if: github.ref == 'refs/heads/master'
       run: |
         ls -alh && scp -r * root@api.stylishreader.com:/var/www/html/English-Burning-Backend  # 复制代码到远程服务器
     - name: Server Shell
