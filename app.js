@@ -8,6 +8,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/user");
 const articleRouter = require("./routes/article");
 const wordRouter = require("./routes/word");
+const feedbackRouter = require("./routes/feedBack");
 const logicRouter = require("./routes/logic");
 const articleTokenRouter = require("./routes/articleToken.cjs");
 const loggerMiddleware = require("./middleware/logger");
@@ -48,6 +49,7 @@ app.use("/wordgroup", wordGroupRouter);
 app.use("/usersetting", userSettingRouter);
 app.use("/articletoken", articleTokenRouter);
 app.use("/phrase", phraseRouter);
+app.use("/feedback", feedbackRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

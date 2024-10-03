@@ -43,11 +43,11 @@ router.post("/list", async function (req, res, next) {
 router.post("/bygroup", async function (req, res, next) {
   const b = req.body;
   const user = req.tUser;
-  if (!b.groupID) {
+  if (!b.groupId) {
     res.json(generateResponse("", 400, "Json format failed."));
     return;
   }
-  const n = await wordModel.find({ groupID: b.groupID, creator: user._id });
+  const n = await wordModel.find({ groupID: b.groupId, creator: user._id });
   res.json(generateResponse(n));
 });
 
