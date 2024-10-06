@@ -14,6 +14,7 @@ const wordGroupSchema = new Schema(
       type: String,
       enum: ["extension", "manually"],
       required: true,
+      default:'manually'
     },
     // 用作页面上显示的名字
     nickName: { type: String, default: "Default" },
