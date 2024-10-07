@@ -16,7 +16,11 @@ router.get("/:id", async function (req, res, next) {
 });
 
 router.get("/youtube/detail/:youtubeId", async function (req, res, next) {
-  const r = await articleModel.find({ youtubeVideoId: req.params.youtubeId });
+  const u = req.tUser;
+  const r = await articleModel.find({
+    youtubeVideoId: req.params.youtubeId,
+    creator: u._id,
+  });
   if (r.length !== 1) {
     res.json(generateResponse("", 400, "fail"));
   } else {
