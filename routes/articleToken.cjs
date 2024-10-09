@@ -90,15 +90,24 @@ router.get("/", async function (req, res, next) {
         console.log(
           `User Id: ${u._id}: 第 ${index + 1} 篇文章的token已经存在。`
         );
+        const a = await articleModel.findById(article._id);
+        a.isTransformed = true;
+        await a.save();
       } else {
-        const t = await convertDataToToken(article._id, u._id);
-        console.log(
-          `User Id: ${u._id}: 第 ${index + 1} 篇文章的token生成成功。`
-        );
+        if (article.enTranscriptData) {
+          const t = await convertDataToToken(article._id, u._id);
+          console.log(
+            `User Id: ${u._id}: 第 ${index + 1} 篇文章的token生成成功。`
+          );
+        } else {
+          console.log(
+            `User Id: ${u._id}: 第 ${index + 1} 篇文章的enTranscriptData为空。`
+          );
+        }
       }
     }
     res.json(generateResponse(""));
   } catch (error) {
-    res.json(generateBadResponse());
+    res.json(generateBadResponse("", error.toString()));
   }
 });
