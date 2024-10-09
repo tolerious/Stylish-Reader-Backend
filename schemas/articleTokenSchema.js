@@ -8,6 +8,7 @@ const tokenSchema = new Schema({
 });
 
 const articleTokenSchema = new Schema({
+  creator: ObjectId,
   articleId: ObjectId,
   youtubeVideoId: String,
   tokens: {
