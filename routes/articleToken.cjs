@@ -53,7 +53,7 @@ router.post("/detail", async function (req, res, next) {
   res.json(generateResponse(at));
 });
 
-//
+// 转换单个视频
 router.post("/", async function (req, res, next) {
   const { articleId } = req.body;
   if (!articleId) {
@@ -73,16 +73,18 @@ router.post("/", async function (req, res, next) {
   res.json(generateResponse(t));
 });
 
+// 全部转换视频
 router.get("/", async function (req, res, next) {
-  const articles = await articleModel.find({}).lean();
+  const u = req.tUser;
+  const articles = await articleModel.find({ creator: u._id }).lean();
 
   for (let [index, article] of articles.entries()) {
     const a = await articleTokenModel.findOne({ articleId: article._id });
     if (a) {
-      console.log(`第 ${index + 1} 篇文章的token已经存在。`);
+      console.log(`User Id: ${u._id}: 第 ${index + 1} 篇文章的token已经存在。`);
     } else {
       const t = await convertDataToToken(article._id);
-      console.log(`第 ${index + 1} 篇文章的token生成成功。`);
+      console.log(`User Id: ${u._id}: 第 ${index + 1} 篇文章的token生成成功。`);
     }
   }
   res.json(generateResponse(""));
