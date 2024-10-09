@@ -19,6 +19,8 @@ const articleSchema = new Schema(
     cnTranscriptData: { type: String, default: "" },
     /** 只针对YouTube网站有效 */
     youtubeVideoId: { type: String, default: "" },
+    // 是否转换完成
+    isTransformed: { type: Boolean, default: false },
   },
 
   {

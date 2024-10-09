@@ -30,10 +30,12 @@ router.get("/youtube/detail/:youtubeId", async function (req, res, next) {
 
 router.get("/youtube/list", async function (req, res, next) {
   const u = req.tUser;
-  const r = await articleModel.find(
-    { tags: { $elemMatch: { $eq: "youtube" } }, creator: u._id },
-    "title _id createdAt youtubeVideoId"
-  );
+  const r = await articleModel
+    .find(
+      { tags: { $elemMatch: { $eq: "youtube" } }, creator: u._id },
+      "title _id createdAt youtubeVideoId isTransformed"
+    )
+    .sort({ createdAt: -1 });
   res.json(generateResponse(r));
 });
 
@@ -80,9 +82,9 @@ router.put("/", async function (req, res, next) {
   }
 });
 
-router.delete("/", async function (req, res, next) {
+router.post("/delete", async function (req, res, next) {
   try {
-    let id = req.body.id;
+    let id = req.body.articleId;
     let doc = await articleModel.findByIdAndDelete(id).exec();
     res.json(generateResponse(doc));
   } catch (error) {

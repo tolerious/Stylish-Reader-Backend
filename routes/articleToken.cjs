@@ -3,11 +3,11 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const { articleTokenModel } = require("../schemas/articleTokenSchema");
 const { articleModel } = require("../schemas/articleSchema");
-const { generateResponse } = require("../utils/utils");
+const { generateResponse, generateBadResponse } = require("../utils/utils");
 const mongoose = require("mongoose");
 module.exports = router;
 
-async function convertDataToToken(articleId) {
+async function convertDataToToken(articleId, userId) {
   const article = await articleModel.findById(articleId);
   const enData = article.enTranscriptData;
   const events = JSON.parse(enData).events;
@@ -36,11 +36,15 @@ async function convertDataToToken(articleId) {
     }
   });
   const m = new articleTokenModel({
+    creator: userId,
     articleId: article._id,
     youtubeVideoId: article.youtubeVideoId,
     tokens: map,
   });
-  return await m.save();
+  const to = await m.save();
+  article.isTransformed = true;
+  await article.save();
+  return to;
 }
 
 router.post("/detail", async function (req, res, next) {
@@ -53,9 +57,10 @@ router.post("/detail", async function (req, res, next) {
   res.json(generateResponse(at));
 });
 
-//
+// 转换单个视频
 router.post("/", async function (req, res, next) {
   const { articleId } = req.body;
+  const u = req.tUser;
   if (!articleId) {
     res.json(generateResponse("", 400, "articleId is required"));
     return;
@@ -69,21 +74,40 @@ router.post("/", async function (req, res, next) {
     res.json(generateResponse("", 400, "article not found"));
     return;
   }
-  const t = await convertDataToToken(articleId);
+  const t = await convertDataToToken(articleId, u._id);
   res.json(generateResponse(t));
 });
 
+// 全部转换视频
 router.get("/", async function (req, res, next) {
-  const articles = await articleModel.find({}).lean();
+  try {
+    const u = req.tUser;
+    const articles = await articleModel.find({ creator: u._id }).lean();
 
-  for (let [index, article] of articles.entries()) {
-    const a = await articleTokenModel.findOne({ articleId: article._id });
-    if (a) {
-      console.log(`第 ${index + 1} 篇文章的token已经存在。`);
-    } else {
-      const t = await convertDataToToken(article._id);
-      console.log(`第 ${index + 1} 篇文章的token生成成功。`);
+    for (let [index, article] of articles.entries()) {
+      const a = await articleTokenModel.findOne({ articleId: article._id });
+      if (a) {
+        console.log(
+          `User Id: ${u._id}: 第 ${index + 1} 篇文章的token已经存在。`
+        );
+        const a = await articleModel.findById(article._id);
+        a.isTransformed = true;
+        await a.save();
+      } else {
+        if (article.enTranscriptData) {
+          const t = await convertDataToToken(article._id, u._id);
+          console.log(
+            `User Id: ${u._id}: 第 ${index + 1} 篇文章的token生成成功。`
+          );
+        } else {
+          console.log(
+            `User Id: ${u._id}: 第 ${index + 1} 篇文章的enTranscriptData为空。`
+          );
+        }
+      }
     }
+    res.json(generateResponse(""));
+  } catch (error) {
+    res.json(generateBadResponse("", error.toString()));
   }
-  res.json(generateResponse(""));
 });
