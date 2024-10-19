@@ -87,6 +87,7 @@ router.post("/list", async function (req, res, next) {
   res.json(generateResponse({ total: count, list: t }));
 });
 
+// 通过groupId获取单词
 router.post("/bygroup", async function (req, res, next) {
   const b = req.body;
   const user = req.tUser;

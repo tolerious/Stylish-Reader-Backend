@@ -2,6 +2,7 @@ const express = require("express");
 const { generateResponse, generateBadResponse } = require("../utils/utils");
 const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 /* GET users listing. */
 // 获取所有父亲词组
@@ -83,12 +84,23 @@ router.post("/", async function (req, res, next) {
 });
 
 router.post("/detail", async function (req, res, next) {
-  let body = req.body;
-  if (!body.groupID) res.json(generateResponse("", 400));
-  let g = await wordGroupModel.findById({ _id: body.groupID }).lean();
-  let t = await wordGroupModel.find({ parentGroupID: body.groupID }).lean();
-  if (t.length > 0) g = Object.assign(g, { hasChild: true });
-  else g = Object.assign(g, { hasChild: false });
+  const { groupID } = req.body;
+  const u = req.tUser;
+  if (!mongoose.Types.ObjectId.isValid(groupID)) {
+    res.json(generateBadResponse("", "Group id is invalid."));
+    return;
+  }
+  let g = await wordGroupModel.findOne({ creator: u._id, _id: groupID });
+  if (!g) {
+    res.json(generateBadResponse("", "No group found."));
+    return;
+  }
+  let t = await wordGroupModel.find({ parentGroupID: groupID }).lean();
+  if (t.length > 0) {
+    g = Object.assign(g, { hasChild: true });
+  } else {
+    g = Object.assign(g, { hasChild: false });
+  }
   res.json(generateResponse(g));
 });
 
