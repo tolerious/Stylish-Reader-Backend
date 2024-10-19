@@ -20,6 +20,13 @@ router.get("/index", async function (req, res, next) {
   );
 });
 
+router.get("/newsinlevel", async function (req, res, next) {
+  const url = `https://www.newsinlevels.com/products/what-people-ate-during-world-war-ii-level-1/#/`;
+  const d = await axios({ url });
+  console.log(d.data)
+  res.json(generateResponse());
+});
+
 router.post("/youdao", async function (req, res, next) {
   const word = req.body.word;
   const url = `https://dict.youdao.com/dictvoice?type=1&audio=${word}`;

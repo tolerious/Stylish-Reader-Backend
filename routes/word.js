@@ -5,6 +5,53 @@ const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { userSettingModel } = require("../schemas/userSettingsSchema");
 const router = express.Router();
 const mongoose = require("mongoose");
+const moment = require("moment");
+
+router.get("/thisweek", async function (req, res, next) {
+  const now = moment();
+  const startOfWeek = now.startOf("isoWeek"); // 本周一
+
+  const dailyCounts = {};
+
+  for (let i = 0; i < 7; i++) {
+    const startOfDay = startOfWeek
+      .clone()
+      .add(i, "days")
+      .startOf("day")
+      .toDate(); // 每天的开始
+    const endOfDay = startOfWeek.clone().add(i, "days").endOf("day").toDate(); // 每天的结束
+
+    try {
+      const count = await wordModel.countDocuments({
+        createdAt: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+      });
+
+      // 将结果存储到 dailyCounts 对象中
+      const dayName = startOfWeek.clone().add(i, "days").format("dddd"); // 获取星期名称
+      dailyCounts[dayName] = count;
+    } catch (error) {
+      console.error("查询出错:", error);
+    }
+  }
+
+  console.log("本周每天添加的文档数量:", dailyCounts);
+  res.json(generateResponse(dailyCounts));
+});
+
+router.get("/today", async function (req, res, next) {
+  const startOfDay = moment().startOf("day").toDate();
+  const endOfDay = moment().endOf("day").toDate();
+  const t = await wordModel.countDocuments({
+    createdAt: {
+      $gte: startOfDay,
+      $lt: endOfDay,
+    },
+  });
+  res.json(generateResponse({ count: t }));
+});
 
 router.get("/:id", async function (req, res, next) {
   try {
