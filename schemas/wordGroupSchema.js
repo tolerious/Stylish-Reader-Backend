@@ -14,7 +14,7 @@ const wordGroupSchema = new Schema(
       type: String,
       enum: ["extension", "manually"],
       required: true,
-      default:'manually'
+      default: "manually",
     },
     // 用作页面上显示的名字
     nickName: { type: String, default: "Default" },
@@ -59,6 +59,7 @@ const wordGroupSchema = new Schema(
         return mongoose
           .model("WordGroup")
           .find({ creator })
+          .sort({ createdAt: -1 })
           .where("parentGroupID")
           .equals("");
       },
