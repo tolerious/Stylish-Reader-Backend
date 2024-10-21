@@ -9,6 +9,7 @@ const articleSchema = new Schema(
     title: String,
     author: String,
     content: String,
+    cover: String,
     tags: [String],
     /** 文章链接 */
     link: { type: String, default: "" },
