@@ -5,6 +5,11 @@ const { articleModel } = rt;
 const ut = require("../utils/utils");
 const { generateResponse } = ut;
 const axios = require("axios").default;
+const cheerio = require("cheerio");
+const {
+  newsInLevelsModel,
+} = require("../schemas/supportedWebsite/newsInLevelsSchema");
+
 // Get article detail
 router.get("/:id", async function (req, res, next) {
   try {
@@ -151,4 +156,71 @@ router.get("/china/daily/:articleID", async function (req, res, next) {
     answerList: atts,
   });
 });
+
+async function parseNewsInLevelsItemAndCreate(html) {
+  const $ = cheerio.load(html);
+  const cover = $(".img-wrap a img").attr("src");
+  const title = $(".news-block-right .title a").text().trim();
+  const excerpt = $(".news-block-right .news-excerpt")
+    .contents()
+    .eq(2)
+    .text()
+    .trim();
+  const level1Url = $(".fancy-buttons ul")
+    .children("li")
+    .eq(0)
+    .find("a")
+    .attr("href");
+  const level2Url = $(".fancy-buttons ul")
+    .children("li")
+    .eq(1)
+    .find("a")
+    .attr("href");
+  const level3Url = $(".fancy-buttons ul")
+    .children("li")
+    .eq(2)
+    .find("a")
+    .attr("href");
+  const originalNewsInLevel = await newsInLevelsModel.findOne({ level1Url });
+  console.log(`Original news in level: ${originalNewsInLevel}`);
+  console.log({ cover, title, excerpt, level1Url, level2Url, level3Url });
+  if (!originalNewsInLevel) {
+    const newsInLevel = await newsInLevelsModel.create({
+      cover,
+      title,
+      excerpt,
+      level1Url,
+      level2Url,
+      level3Url,
+    });
+  }
+}
+
+router.post("/grab/newsinlevels", async function (req, res, next) {
+  try {
+    const { url } = req.body;
+    const requestUrl = url || `https://www.newsinlevels.com/#/`;
+    console.log(url, requestUrl);
+    const d = await axios({ url: requestUrl });
+    const $ = cheerio.load(d.data);
+    const newsItemList = $(
+      ".home-in .container .row .main-content .recent-news .news-block"
+    );
+    newsItemList.each(async (index, element) => {
+      await parseNewsInLevelsItemAndCreate(newsItemList.eq(index).html());
+    });
+    res.json(generateResponse());
+  } catch (error) {
+    res.json(ut.generateBadResponse());
+  }
+});
+
+router.post("/parse/newsinlevels", async function (req, res, next) {
+  const url = `https://www.newsinlevels.com/products/same-sex-marriage-in-india-level-1/#/`;
+  const a = await axios.get(url);
+  const $ = cheerio.load(a.data);
+  console.log(a.data);
+  res.json(generateResponse());
+});
+
 module.exports = router;
