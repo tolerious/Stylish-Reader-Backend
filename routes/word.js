@@ -171,7 +171,7 @@ router.post("/delete", async function (req, res, next) {
   }
   const group = await wordGroupModel.findById(groupId);
   group.wordCount--;
-  if (group.wordCount < 0) group[0].wordCount = 0;
+  if (group.wordCount < 0) group.wordCount = 0;
   await group.save();
   let doc = await wordModel.findByIdAndDelete(id).exec();
   res.json(generateResponse(doc));
