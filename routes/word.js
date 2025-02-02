@@ -44,13 +44,10 @@ router.get("/thisweek", async function (req, res, next) {
 router.get("/today", async function (req, res, next) {
   const startOfDay = moment().startOf("day").toDate();
   const endOfDay = moment().endOf("day").toDate();
-  const t = await wordModel.countDocuments({
-    createdAt: {
-      $gte: startOfDay,
-      $lt: endOfDay,
-    },
-  });
-  res.json(generateResponse({ count: t }));
+  const w = await wordModel
+    .find({ createdAt: { $gte: startOfDay, $lt: endOfDay } })
+    .exec();
+  res.json(generateResponse({ count: w.length, wordList: w }));
 });
 
 router.get("/:id", async function (req, res, next) {
