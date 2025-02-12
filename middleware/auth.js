@@ -11,6 +11,7 @@ const auth = function (req, res, next) {
   if (
     // TODO: This array should be a global array or a array in a global file
     ([
+      "/deepseek",
       "/logic/login",
       "/test",
       "/grab",

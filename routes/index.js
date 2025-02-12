@@ -9,6 +9,7 @@ const qrcode = require("qrcode");
 const cheerio = require("cheerio");
 const Parser = require("@postlight/parser");
 const { default: axios } = require("axios");
+const { default: OpenAI } = require("openai");
 
 router.get("/index", async function (req, res, next) {
   qrcode.toDataURL(
@@ -23,7 +24,7 @@ router.get("/index", async function (req, res, next) {
 router.get("/newsinlevel", async function (req, res, next) {
   const url = `https://www.newsinlevels.com/products/what-people-ate-during-world-war-ii-level-1/#/`;
   const d = await axios({ url });
-  console.log(d.data)
+  console.log(d.data);
   res.json(generateResponse());
 });
 
@@ -97,6 +98,30 @@ router.get("/test", async function (req, res, next) {
   Parser.addExtractor(customExtractor);
   let r = await Parser.parse(url);
   res.send(generateResponse(r));
+});
+
+router.post("/deepseek", async function (req, res, next) {
+  const openai = new OpenAI({
+    baseURL: process.env.DEEP_SEEK_URL,
+    apiKey: process.env.DEEP_SEEK_API_KEY,
+  });
+  const content = req.body.content;
+  if (!content) {
+    res.json(generateBadResponse());
+    return;
+  }
+  const completion = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项。答案和解析统一在所有题目后提供。以下是文章内容: ${content}`,
+      },
+    ],
+    model: "deepseek-chat",
+  });
+
+  console.log(completion.choices[0].message.content);
+  res.send(completion);
 });
 
 module.exports = router;
