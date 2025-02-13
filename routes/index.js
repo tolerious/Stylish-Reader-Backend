@@ -110,18 +110,25 @@ router.post("/deepseek", async function (req, res, next) {
     res.json(generateBadResponse());
     return;
   }
-  const completion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项。答案和解析统一在所有题目后提供。以下是文章内容: ${content}`,
-      },
-    ],
-    model: "deepseek-chat",
-  });
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项，题目和选项使用英文。答案和解析使用中文进行分析，答案和解析统一在所有题目后提供。以下是文章内容: ${content}`,
+        },
+      ],
+      model: "deepseek-chat",
+    });
 
-  console.log(completion.choices[0].message.content);
-  res.send(completion);
+    console.log(completion.choices[0].message.content);
+    res.json(
+      generateResponse({ content: completion.choices[0].message.content })
+    );
+  } catch (error) {
+    console.log("deepseek error.");
+    console.log(error);
+  }
 });
 
 module.exports = router;
