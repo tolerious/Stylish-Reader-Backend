@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const rt = require("../schemas/articleSchema");
+const {
+  theGuardianModel,
+} = require("../schemas/supportedWebsite/theGuardianSchema");
+const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { articleModel } = rt;
 const ut = require("../utils/utils");
-const { generateResponse } = ut;
+const { generateResponse, generateBadResponse } = ut;
 const axios = require("axios").default;
 const cheerio = require("cheerio");
 const {
@@ -222,5 +226,32 @@ router.post("/parse/newsinlevels", async function (req, res, next) {
   console.log(a.data);
   res.json(generateResponse());
 });
+
+// #region The Guardian
+router.post("/guardian", async function (req, res, next) {
+  const { title, summary, content, groupId } = req.body;
+  const userId = req.tUser._id;
+  const existGuardianList = await theGuardianModel.find({
+    groupId,
+    author: userId,
+  });
+  if (existGuardianList.length > 0) {
+    res.json(generateBadResponse());
+  } else {
+    if (title && content && groupId && req.tUser) {
+      const t = await theGuardianModel.create({
+        title,
+        summary,
+        content,
+        groupId,
+        author: userId,
+      });
+      res.json(generateResponse(t));
+    } else {
+      res.json(generateBadResponse());
+    }
+  }
+});
+// #endregion
 
 module.exports = router;
