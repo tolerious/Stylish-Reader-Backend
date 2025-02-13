@@ -229,7 +229,7 @@ router.post("/parse/newsinlevels", async function (req, res, next) {
 
 // #region The Guardian
 router.post("/guardian", async function (req, res, next) {
-  const { title, summary, content, groupId } = req.body;
+  const { title, summary, originalUrl, content, groupId } = req.body;
   const userId = req.tUser._id;
   const existGuardianList = await theGuardianModel.find({
     groupId,
@@ -238,13 +238,14 @@ router.post("/guardian", async function (req, res, next) {
   if (existGuardianList.length > 0) {
     res.json(generateBadResponse());
   } else {
-    if (title && content && groupId && req.tUser) {
+    if (title && content && groupId && originalUrl && req.tUser) {
       const t = await theGuardianModel.create({
         title,
         summary,
         content,
         groupId,
         author: userId,
+        originalUrl,
       });
       res.json(generateResponse(t));
     } else {

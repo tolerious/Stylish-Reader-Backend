@@ -10,6 +10,9 @@ const theGuardianSchema = new Schema(
     cover: [coverSchema],
     summary: String,
     content: String,
+    originalUrl: String,
+    questions: String,
+    answers: String,
   },
 
   {
