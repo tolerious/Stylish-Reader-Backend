@@ -18,6 +18,7 @@ const auth = function (req, res, next) {
       "/user/",
       "/youdao/",
       "/translation/content",
+      "/cron"
     ].indexOf(req.originalUrl) > -1 &&
       (req.method === "POST" || req.method === "GET")) ||
     rule.test(req.originalUrl) ||

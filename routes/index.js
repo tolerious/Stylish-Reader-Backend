@@ -10,6 +10,20 @@ const cheerio = require("cheerio");
 const Parser = require("@postlight/parser");
 const { default: axios } = require("axios");
 const { default: OpenAI } = require("openai");
+const { CronJob } = require("cron");
+
+router.get("/cron", async function (req, res, next) {
+  const job = new CronJob(
+    "* * * * * *", // cronTime
+    function () {
+      console.log("You will see this message every second");
+    }, // onTick
+    null, // onComplete
+    true, // start
+    "America/Los_Angeles" // timeZone
+  );
+  res.json(generateResponse());
+});
 
 router.get("/index", async function (req, res, next) {
   qrcode.toDataURL(
