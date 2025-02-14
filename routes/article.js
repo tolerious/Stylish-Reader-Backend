@@ -14,16 +14,6 @@ const {
   newsInLevelsModel,
 } = require("../schemas/supportedWebsite/newsInLevelsSchema");
 
-// Get article detail
-router.get("/:id", async function (req, res, next) {
-  try {
-    let t = await articleModel.findById(req.params.id).exec();
-    res.json(generateResponse(t));
-  } catch (error) {
-    res.json(generateResponse("", 400, "fail"));
-  }
-});
-
 router.get("/youtube/detail/:youtubeId", async function (req, res, next) {
   const u = req.tUser;
   const r = await articleModel.find({
@@ -227,8 +217,8 @@ router.post("/parse/newsinlevels", async function (req, res, next) {
   res.json(generateResponse());
 });
 
-// #region The Guardian
 router.post("/guardian", async function (req, res, next) {
+  console.log("sdjfasldjfalsd;f");
   const { title, summary, originalUrl, content, groupId } = req.body;
   const userId = req.tUser._id;
   const existGuardianList = await theGuardianModel.find(
@@ -257,6 +247,13 @@ router.post("/guardian", async function (req, res, next) {
   }
 });
 
+router.get("/guardian", async function (req, res, next) {
+  const userId = req.tUser._id;
+  const r = await theGuardianModel.find({ author: userId }, "_id title").exec();
+
+  res.json(generateResponse(r));
+});
+
 router.get("/guardian/:id", async function (req, res, next) {
   const id = req.params.id;
   const t = await theGuardianModel.findById(id);
@@ -266,6 +263,15 @@ router.get("/guardian/:id", async function (req, res, next) {
     res.json(generateBadResponse());
   }
 });
-// #endregion
 
+// Get article detail
+// 这个路由会与/article/guardian这样的路由冲突
+router.get("/:id", async function (req, res, next) {
+  try {
+    let t = await articleModel.findById(req.params.id).exec();
+    res.json(generateResponse(t));
+  } catch (error) {
+    res.json(generateResponse("", 400, "fail"));
+  }
+});
 module.exports = router;
