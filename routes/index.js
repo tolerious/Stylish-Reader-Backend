@@ -9,6 +9,25 @@ const qrcode = require("qrcode");
 const cheerio = require("cheerio");
 const Parser = require("@postlight/parser");
 const { default: axios } = require("axios");
+const { default: OpenAI } = require("openai");
+const { CronJob } = require("cron");
+const { articleModel } = require("../schemas/articleSchema");
+const {
+  theGuardianModel,
+} = require("../schemas/supportedWebsite/theGuardianSchema");
+
+router.get("/cron", async function (req, res, next) {
+  const job = new CronJob(
+    "* * * * * *", // cronTime
+    function () {
+      console.log("You will see this message every second");
+    }, // onTick
+    null, // onComplete
+    true, // start
+    "America/Los_Angeles" // timeZone
+  );
+  res.json(generateResponse());
+});
 
 router.get("/index", async function (req, res, next) {
   qrcode.toDataURL(
@@ -23,7 +42,7 @@ router.get("/index", async function (req, res, next) {
 router.get("/newsinlevel", async function (req, res, next) {
   const url = `https://www.newsinlevels.com/products/what-people-ate-during-world-war-ii-level-1/#/`;
   const d = await axios({ url });
-  console.log(d.data)
+  console.log(d.data);
   res.json(generateResponse());
 });
 
@@ -97,6 +116,58 @@ router.get("/test", async function (req, res, next) {
   Parser.addExtractor(customExtractor);
   let r = await Parser.parse(url);
   res.send(generateResponse(r));
+});
+
+router.post("/deepseek", async function (req, res, next) {
+  const openai = new OpenAI({
+    baseURL: process.env.DEEP_SEEK_URL,
+    apiKey: process.env.DEEP_SEEK_API_KEY,
+  });
+  const { articleId } = req.body;
+  if (!articleId) {
+    res.json(generateBadResponse());
+    return;
+  }
+  const article = await theGuardianModel.findById(articleId).exec();
+  const questions = article.questions;
+  const answers = article.answers;
+  if (questions && answers) {
+    res.json(generateResponse(article));
+    return;
+  }
+  const content = article.content.join("");
+  // console.log(content);
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项，题目和选项使用英文。答案和解析使用中文进行分析，答案和解析统一在所有题目后提供，问题和答案之间使用三个感叹号进行分隔。下是文章内容: ${content}`,
+          // content: "你好",
+        },
+      ],
+      model: "deepseek-chat",
+    });
+
+    // console.log(completion);
+    // console.log(completion.choices[0].message.content);
+    // console.log(typeof completion.choices[0].message.content);
+    const replyContent = completion.choices[0].message.content;
+    const questionList = replyContent.split("!!!")[0];
+    const answerList = replyContent.split("!!!")[1];
+    console.log(questionList);
+    console.log(answerList);
+    article.questions = questionList;
+    article.answers = answerList;
+    await article.save();
+    res.json(
+      generateResponse({ content: completion.choices[0].message.content })
+    );
+  } catch (error) {
+    console.log("deepseek error.");
+    console.log(error);
+    res.json(generateBadResponse());
+  }
 });
 
 module.exports = router;

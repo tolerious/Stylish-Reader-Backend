@@ -1,24 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const rt = require("../schemas/articleSchema");
+const {
+  theGuardianModel,
+} = require("../schemas/supportedWebsite/theGuardianSchema");
+const { wordGroupModel } = require("../schemas/wordGroupSchema");
 const { articleModel } = rt;
 const ut = require("../utils/utils");
-const { generateResponse } = ut;
+const { generateResponse, generateBadResponse } = ut;
 const axios = require("axios").default;
 const cheerio = require("cheerio");
 const {
   newsInLevelsModel,
 } = require("../schemas/supportedWebsite/newsInLevelsSchema");
-
-// Get article detail
-router.get("/:id", async function (req, res, next) {
-  try {
-    let t = await articleModel.findById(req.params.id).exec();
-    res.json(generateResponse(t));
-  } catch (error) {
-    res.json(generateResponse("", 400, "fail"));
-  }
-});
 
 router.get("/youtube/detail/:youtubeId", async function (req, res, next) {
   const u = req.tUser;
@@ -223,4 +217,103 @@ router.post("/parse/newsinlevels", async function (req, res, next) {
   res.json(generateResponse());
 });
 
+router.post("/guardian", async function (req, res, next) {
+  console.log("sdjfasldjfalsd;f");
+  const { title, summary, originalUrl, content, groupId } = req.body;
+  const userId = req.tUser._id;
+  const existGuardianList = await theGuardianModel.find(
+    {
+      groupId,
+      author: userId,
+    },
+    "_id title"
+  );
+  if (existGuardianList.length > 0) {
+    res.json(existGuardianList[0]);
+  } else {
+    if (title && content && groupId && originalUrl && req.tUser) {
+      const t = await theGuardianModel.create({
+        title,
+        summary,
+        content,
+        groupId,
+        author: userId,
+        originalUrl,
+      });
+      res.json(generateResponse(t));
+    } else {
+      res.json(generateBadResponse());
+    }
+  }
+});
+
+router.get("/guardian", async function (req, res, next) {
+  const userId = req.tUser._id;
+  // const r = await theGuardianModel.find({ author: userId }, "_id title questions").exec();
+  const r = await theGuardianModel.aggregate([
+    {
+      // 添加一个新的字段 'date'，仅包含日期部分
+      $addFields: {
+        date: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+      },
+    },
+    {
+      // 筛选需要的字段
+      $project: {
+        date: 1,
+        title: 1,
+        author: 1,
+        summary: 1,
+        questions: 1,
+        _id: 1,
+        createdAt: 1,
+      },
+    },
+    {
+      // 按照 'date' 字段进行分组
+      $group: {
+        _id: "$date",
+        count: { $sum: 1 }, // 计算每个日期的文档数量
+        documents: {
+          $push: {
+            _id: "$_id",
+            title: "$title",
+            author: "$author",
+            questions: "$questions",
+            summary: "$summary",
+          },
+        },
+      },
+    },
+    {
+      // 按日期升序排序
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  res.json(generateResponse(r));
+});
+
+router.get("/guardian/:id", async function (req, res, next) {
+  const id = req.params.id;
+  const t = await theGuardianModel.findById(id);
+  if (t) {
+    res.json(generateResponse(t));
+  } else {
+    res.json(generateBadResponse());
+  }
+});
+
+// Get article detail
+// 这个路由会与/article/guardian这样的路由冲突
+router.get("/:id", async function (req, res, next) {
+  try {
+    let t = await articleModel.findById(req.params.id).exec();
+    res.json(generateResponse(t));
+  } catch (error) {
+    res.json(generateResponse("", 400, "fail"));
+  }
+});
 module.exports = router;
