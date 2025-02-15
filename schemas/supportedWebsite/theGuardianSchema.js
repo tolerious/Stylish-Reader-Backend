@@ -9,7 +9,7 @@ const theGuardianSchema = new Schema(
     groupId: mongoose.ObjectId,
     cover: [coverSchema],
     summary: String,
-    content: String,
+    content: [String],
     originalUrl: String,
     questions: String,
     answers: String,

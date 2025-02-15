@@ -249,7 +249,49 @@ router.post("/guardian", async function (req, res, next) {
 
 router.get("/guardian", async function (req, res, next) {
   const userId = req.tUser._id;
-  const r = await theGuardianModel.find({ author: userId }, "_id title").exec();
+  // const r = await theGuardianModel.find({ author: userId }, "_id title questions").exec();
+  const r = await theGuardianModel.aggregate([
+    {
+      // 添加一个新的字段 'date'，仅包含日期部分
+      $addFields: {
+        date: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+      },
+    },
+    {
+      // 筛选需要的字段
+      $project: {
+        date: 1,
+        title: 1,
+        author: 1,
+        summary: 1,
+        questions: 1,
+        _id: 1,
+        createdAt: 1,
+      },
+    },
+    {
+      // 按照 'date' 字段进行分组
+      $group: {
+        _id: "$date",
+        count: { $sum: 1 }, // 计算每个日期的文档数量
+        documents: {
+          $push: {
+            _id: "$_id",
+            title: "$title",
+            author: "$author",
+            questions: "$questions",
+            summary: "$summary",
+          },
+        },
+      },
+    },
+    {
+      // 按日期升序排序
+      $sort: { _id: 1 },
+    },
+  ]);
 
   res.json(generateResponse(r));
 });

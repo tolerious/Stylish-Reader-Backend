@@ -132,17 +132,17 @@ router.post("/deepseek", async function (req, res, next) {
   const questions = article.questions;
   const answers = article.answers;
   if (questions && answers) {
-    res.json(generateResponse({ questions, answers }));
+    res.json(generateResponse(article));
     return;
   }
-  const content = article.content;
+  const content = article.content.join("");
   // console.log(content);
   try {
     const completion = await openai.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项，题目和选项使用英文。答案和解析使用中文进行分析，答案和解析统一在所有题目后提供，问题和答案之间请使用三个感叹号进行分隔以。下是文章内容: ${content}`,
+          content: `请根据这篇文章的内容，帮我出5个阅读理解题目，每个题目提供4个选项，题目和选项使用英文。答案和解析使用中文进行分析，答案和解析统一在所有题目后提供，问题和答案之间使用三个感叹号进行分隔。下是文章内容: ${content}`,
           // content: "你好",
         },
       ],
@@ -157,6 +157,9 @@ router.post("/deepseek", async function (req, res, next) {
     const answerList = replyContent.split("!!!")[1];
     console.log(questionList);
     console.log(answerList);
+    article.questions = questionList;
+    article.answers = answerList;
+    await article.save();
     res.json(
       generateResponse({ content: completion.choices[0].message.content })
     );
