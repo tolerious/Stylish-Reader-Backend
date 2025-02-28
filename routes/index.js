@@ -174,9 +174,6 @@ router.post("/deepseek", async function (req, res, next) {
 router.post("/baidu", async function (req, res, next) {
   const { content } = req.body;
   const q = content || "answer your question";
-  console.log(q);
-  const from = "en";
-  const to = "zh";
   const appId = "20250227002286409";
   const appSecret = "uC67gjcY8GPMCAxLludx";
   const salt = "stylish-reader";
