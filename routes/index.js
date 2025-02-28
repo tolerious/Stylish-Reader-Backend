@@ -172,24 +172,52 @@ router.post("/deepseek", async function (req, res, next) {
 });
 
 router.post("/baidu", async function (req, res, next) {
-  const { content } = req.body;
-  const q = content || "answer your question";
+  // field 是否为领域翻译
+  let { content, field } = req.body;
+  if (!content) {
+    res.json(generateBadResponse());
+    return;
+  }
+
   const appId = "20250227002286409";
   const appSecret = "uC67gjcY8GPMCAxLludx";
-  const salt = "stylish-reader";
-  const stringToBeSigned = `${appId}${q}${salt}${appSecret}`;
-  console.log(stringToBeSigned.replace(/[\n\t]/g, ""));
-  const sign = crypto
-    .createHash("md5")
-    .update(stringToBeSigned.replace(/[\n\t]/g, ""))
-    .digest("hex");
+  const salt = "stylishreader";
 
-  const requestUrl = `https://api.fanyi.baidu.com/api/trans/vip/translate?q=${q}&from=en&to=zh&appid=${appId}&salt=${salt}&sign=${sign}`;
+  // 如果不是领域翻译
+  if (!field) {
+    const contentToBeCut = content.replace(/[\n\t]/g, "");
+    const stringToBeSigned = `${appId}${contentToBeCut}${salt}${appSecret}`;
+    console.log(stringToBeSigned);
+    const sign = crypto
+      .createHash("md5")
+      .update(stringToBeSigned.replace(/[\n\t()+-]/g, ""))
+      .digest("hex")
+      .toLowerCase();
+    console.log(sign);
+    const requestUrl = `https://api.fanyi.baidu.com/api/trans/vip/translate?q=${contentToBeCut}&from=en&to=zh&appid=${appId}&salt=${salt}&sign=${sign}`;
 
-  const r = await axios({ url: requestUrl });
+    const r = await axios({ url: requestUrl });
 
-  console.log(r.data);
-  res.json(generateResponse(r.data));
+    console.log(r.data);
+    res.json(generateResponse(r.data));
+  } else {
+    let contentToBeCut = content.replace(/[\n\t]/g, "");
+    contentToBeCut = contentToBeCut.replace(/[+]/g, encodeURI("+"));
+    const stringToBeSigned = `${appId}${contentToBeCut}${salt}${field}${appSecret}`;
+    console.log(stringToBeSigned);
+    const sign = crypto
+      .createHash("md5")
+      .update(stringToBeSigned)
+      .digest("hex")
+      .toLowerCase();
+    console.log(sign);
+    const requestUrl = `https://fanyi-api.baidu.com/api/trans/vip/fieldtranslate?q=${contentToBeCut}&from=en&to=zh&appid=${appId}&salt=${salt}&domain=${field}&sign=${sign}`;
+    console.log(requestUrl);
+    const r = await axios({ url: requestUrl });
+    console.log("...");
+    console.log(r.data);
+    res.json(generateResponse(r.data));
+  }
 });
 
 module.exports = router;
