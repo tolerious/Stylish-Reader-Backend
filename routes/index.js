@@ -1,4 +1,5 @@
 const express = require("express");
+const crypto = require("crypto");
 const {
   generateResponse,
   grabWordFromCambridge,
@@ -168,6 +169,30 @@ router.post("/deepseek", async function (req, res, next) {
     console.log(error);
     res.json(generateBadResponse());
   }
+});
+
+router.post("/baidu", async function (req, res, next) {
+  const { content } = req.body;
+  const q = content || "answer your question";
+  console.log(q);
+  const from = "en";
+  const to = "zh";
+  const appId = "20250227002286409";
+  const appSecret = "uC67gjcY8GPMCAxLludx";
+  const salt = "stylish-reader";
+  const stringToBeSigned = `${appId}${q}${salt}${appSecret}`;
+  console.log(stringToBeSigned.replace(/[\n\t]/g, ""));
+  const sign = crypto
+    .createHash("md5")
+    .update(stringToBeSigned.replace(/[\n\t]/g, ""))
+    .digest("hex");
+
+  const requestUrl = `https://api.fanyi.baidu.com/api/trans/vip/translate?q=${q}&from=en&to=zh&appid=${appId}&salt=${salt}&sign=${sign}`;
+
+  const r = await axios({ url: requestUrl });
+
+  console.log(r.data);
+  res.json(generateResponse(r.data));
 });
 
 module.exports = router;
